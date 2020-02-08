@@ -1,0 +1,19 @@
+{
+  "name": "digitalposters",
+  "version": "1.0.0",
+  "description": "create and share digital posters for academic use.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AshwinK97/DigitalPosters.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AshwinK97/DigitalPosters/issues"
+  },
+  "homepage": "https://github.com/AshwinK97/DigitalPosters#readme"
+}
