@@ -11,13 +11,22 @@
         :list="users"
         :animation="200"
       >
-        <info-card
-          v-for="user in users"
-          :user="user"
+        <editor
+          v-for="(user, index) in users"
           :key="user.id"
-          @on-edit="onEdit"
-          @on-delete="onDelete"
-        ></info-card>
+          :active="user.id === activeCard"
+          :component="user"
+          @on-colour-change="onColourChange(users, index, selectedColour)"
+          @on-close="onClose"
+          @on-delete="onDelete(users, index)"
+        >
+          <info-card
+            :user="user"
+            @on-edit="onEdit"
+            @on-delete="onDelete"
+            @click.native="toggleActiveCard(user)"
+          ></info-card>
+        </editor>
       </draggable>
     </div>
 
@@ -32,13 +41,22 @@
         :list="newUsers"
         :animation="200"
       >
-        <info-card
-          v-for="user in newUsers"
-          :user="user"
+        <editor
+          v-for="(user, index) in newUsers"
           :key="user.id"
-          @on-edit="onEdit"
-          @on-delete="onDelete"
-        ></info-card>
+          :active="user.id === activeCard"
+          :component="user"
+          @on-colour-change="onColourChange"
+          @on-close="onClose"
+          @on-delete="onDelete(newUsers, index)"
+        >
+          <info-card
+            :user="user"
+            @on-edit="onEdit"
+            @on-delete="onDelete"
+            @click.native="toggleActiveCard(user)"
+          ></info-card>
+        </editor>
       </draggable>
     </div>
   </div>
@@ -51,6 +69,7 @@ import Draggable from "vuedraggable";
 import { EditIcon, Trash2Icon } from "vue-feather-icons";
 
 import InfoCard from "./components/InfoCard";
+import Editor from "./components/Editor";
 
 export default {
   name: "app",
@@ -58,36 +77,43 @@ export default {
     EditIcon,
     Trash2Icon,
     Draggable,
-    InfoCard
+    InfoCard,
+    Editor
   },
   data() {
     return {
+      activeCard: "",
       users: [
         {
           id: 1,
           name: "Adrian Schubert",
+          backgroundColor: "#fff",
           avatar:
             "https://pickaface.net/gallery/avatar/unr_sample_161118_2054_ynlrg.png"
         },
         {
           id: 2,
           name: "Violet Gates",
+          backgroundColor: "#fff",
           avatar: "https://pickaface.net/gallery/avatar/freud51c8b3f65e7dc.png"
         },
         {
           id: 3,
           name: "Steve Jobs",
+          backgroundColor: "#fff",
           avatar: "https://pickaface.net/gallery/avatar/Opi51c74d0125fd4.png"
         },
         {
           id: 4,
           name: "Yassine Smith",
+          backgroundColor: "#fff",
           avatar:
             "https://pickaface.net/gallery/avatar/unr_yassine_191124_2012_3gngr.png"
         },
         {
           id: 5,
           name: "Senior Saez",
+          backgroundColor: "#fff",
           avatar:
             "https://pickaface.net/gallery/avatar/elmedinilla541c03412955c.png"
         }
@@ -96,29 +122,34 @@ export default {
         {
           id: 6,
           name: "Steve Jobs",
+          backgroundColor: "#fff",
           avatar: "https://pickaface.net/gallery/avatar/Opi51c74d0125fd4.png"
         },
         {
           id: 7,
           name: "Yassine Smith",
+          backgroundColor: "#fff",
           avatar:
             "https://pickaface.net/gallery/avatar/unr_yassine_191124_2012_3gngr.png"
         },
         {
           id: 8,
           name: "Senior Saez",
+          backgroundColor: "#fff",
           avatar:
             "https://pickaface.net/gallery/avatar/elmedinilla541c03412955c.png"
         },
         {
           id: 9,
           name: "Adrian Schubert",
+          backgroundColor: "#fff",
           avatar:
             "https://pickaface.net/gallery/avatar/unr_sample_161118_2054_ynlrg.png"
         },
         {
           id: 10,
           name: "Violet Gates",
+          backgroundColor: "#fff",
           avatar: "https://pickaface.net/gallery/avatar/freud51c8b3f65e7dc.png"
         }
       ]
@@ -128,8 +159,18 @@ export default {
     onEdit(user) {
       alert(`Editing ${user.name}`);
     },
-    onDelete(user) {
-      alert(`Deleting ${user.name}`);
+    onDelete(list, index) {
+      list.splice(index, 1);
+      this.onClose();
+    },
+    onClose() {
+      this.activeCard = "";
+    },
+    onColourChange(list, index, colour) {
+      list[index].backgroundColor = "#fefefe";
+    },
+    toggleActiveCard(card) {
+      this.activeCard = card.id;
     }
   }
 };

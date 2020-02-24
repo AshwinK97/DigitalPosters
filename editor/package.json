@@ -11,6 +11,7 @@
     "tailwindcss": "^1.2.0",
     "vue": "^2.6.10",
     "vue-feather-icons": "^5.0.0",
+    "vue-inline-text-editor": "^1.0.1",
     "vuedraggable": "^2.23.2"
   },
   "devDependencies": {
