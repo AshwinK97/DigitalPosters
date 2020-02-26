@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="min-h-screen w-screen bg-gray-200 flex flex-col pt-16 px-16">
+  <div id="app" class="min-h-screen w-screen flex flex-col pt-16 px-16">
     <h1>Digital Posters</h1>
     <div id="header" class="flex mb-4">
       <div class="text-center w-full">
@@ -35,7 +35,10 @@
             :box="box"
             @on-delete="onDelete(posterColOne, index)"
           ></info-card>
-          <div @click="onAdd(posterColOne)" class="p-4 mb-3 bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700">
+          <div
+            @click="onAdd(posterColOne)"
+            class="p-4 mb-3 bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
+          >
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
         </draggable>
@@ -55,6 +58,12 @@
             :box="box"
             @on-delete="onDelete(posterColTwo, index)"
           ></info-card>
+          <div
+            @click="onAdd(posterColTwo)"
+            class="p-4 mb-3 bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
+          >
+            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+          </div>
         </draggable>
       </div>
       <div class="text-center w-1/3">
@@ -72,6 +81,12 @@
             :box="box"
             @on-delete="onDelete(posterColThree, index)"
           ></info-card>
+          <div
+            @click="onAdd(posterColThree)"
+            class="p-4 mb-3 bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
+          >
+            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+          </div>
         </draggable>
       </div>
     </div>
@@ -128,10 +143,12 @@ export default {
       this.onClose();
     },
     onAdd(list) {
-      list.push({id: this.generateId()});
+      list.push({ id: this.generateId() });
     },
     generateId() {
-      return Math.random().toString(36).substr(2, 9);
+      return Math.random()
+        .toString(36)
+        .substr(2, 9);
     }
   }
 };

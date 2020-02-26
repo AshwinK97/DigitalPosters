@@ -8,6 +8,10 @@ html body{
   overflow-x: hidden;
 }
 
+#app {
+  background: url("https://www.toptal.com/designers/subtlepatterns/patterns/webb.png")
+}
+
 h1 {
   display: block;
   font-size: 2em;
