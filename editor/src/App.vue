@@ -130,17 +130,16 @@ export default {
   data() {
     return {
       activeCard: "",
-      header: [{ id: 1 }],
-      posterColOne: [{ id: 1 }, { id: 2 }],
-      posterColTwo: [{ id: 3 }, { id: 4 }],
-      posterColThree: [{ id: 5 }, { id: 6 }],
-      footer: [{ id: 1 }]
+      header: [{ id: "yle0mxm4q" }],
+      posterColOne: [{ id: "kn0x8hwy0" }, { id: "whlrej20q" }],
+      posterColTwo: [{ id: "t1swg2t3l" }, { id: "q9wl907zl" }],
+      posterColThree: [{ id: "pyng271w9" }, { id: "anx4u9zxm" }],
+      footer: [{ id: "ocfmvpdbw" }]
     };
   },
   methods: {
     onDelete(list, index) {
       list.splice(index, 1);
-      this.onClose();
     },
     onAdd(list) {
       list.push({ id: this.generateId() });

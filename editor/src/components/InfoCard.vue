@@ -1,6 +1,10 @@
 <template>
   <div class="p-4 mb-3 bg-white justify-between items-center shadow rounded-lg">
-    <Trash2Icon @click="$emit('on-delete')" size="2x" class="p-1 focus:shadow-outline text-red-500 hover:text-red-600"/>
+    <Trash2Icon
+      @click="$emit('on-delete')"
+      size="2x"
+      class="p-1 focus:shadow-outline text-red-500 hover:text-red-600"
+    />
     <div class="flex items-center flex-col w-full">
       <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
         <div class="menubar">
@@ -55,7 +59,7 @@
           </button>
         </div>
       </editor-menu-bar>
-      <editor-content :editor="editor" class="w-full"/>
+      <editor-content :editor="editor" class="w-full" />
     </div>
   </div>
 </template>
@@ -139,9 +143,37 @@ export default {
           new Underline(),
           new History(),
           new Image()
+        ],
+        onUpdate: ({ getJSON }) => {
+          this.json = getJSON();
+        }
+      }),
+      json: {
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "This is some inserted text. 👋"
+              }
+            ]
+          }
         ]
-      })
+      }
     };
+  },
+  watch: {
+    json(content) {
+      localStorage[this.box.id] = JSON.stringify(content);
+    }
+  },
+  mounted() {
+    if (localStorage[this.box.id]) {
+      // you can pass a json document
+      this.editor.setContent(JSON.parse(localStorage[this.box.id]), true);
+    }
   },
   beforeDestroy() {
     // Always destroy your editor instance when it's no longer needed
