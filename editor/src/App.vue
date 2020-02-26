@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="min-h-screen w-screen bg-gray-200 flex flex-col pt-20 px-16">
+  <div id="app" class="min-h-screen w-screen bg-gray-200 flex flex-col pt-16 px-16">
     <div id="header" class="flex mb-4">
       <div class="text-center w-full">
         <draggable
@@ -9,7 +9,7 @@
           :list="header"
           :animation="200"
         >
-          <info-card v-for="box in header" :key="box.id" :box="box"></info-card>
+          <info-card v-for="(box, index) in header" :key="box.id" :box="box" @on-delete="onDelete(header, index)"></info-card>
         </draggable>
       </div>
     </div>
@@ -23,7 +23,7 @@
           :list="posterColOne"
           :animation="200"
         >
-          <info-card v-for="box in posterColOne" :key="box.id" :box="box"></info-card>
+          <info-card v-for="(box, index) in posterColOne" :key="box.id" :box="box" @on-delete="onDelete(posterColOne, index)"></info-card>
         </draggable>
       </div>
       <div class="text-center w-1/3">
@@ -35,7 +35,7 @@
           :list="posterColTwo"
           :animation="200"
         >
-          <info-card v-for="box in posterColTwo" :key="box.id" :box="box"></info-card>
+          <info-card v-for="(box, index) in posterColTwo" :key="box.id" :box="box" @on-delete="onDelete(posterColTwo, index)"></info-card>
         </draggable>
       </div>
       <div class="text-center w-1/3">
@@ -47,7 +47,7 @@
           :list="posterColThree"
           :animation="200"
         >
-          <info-card v-for="box in posterColThree" :key="box.id" :box="box"></info-card>
+          <info-card v-for="(box, index) in posterColThree" :key="box.id" :box="box" @on-delete="onDelete(posterColThree, index)"></info-card>
         </draggable>
       </div>
     </div>
@@ -60,7 +60,7 @@
           :list="footer"
           :animation="200"
         >
-          <info-card v-for="box in footer" :key="box.id" :box="box"></info-card>
+          <info-card v-for="(box, index) in footer" :key="box.id" :box="box" @on-delete="onDelete(footer, index)"></info-card>
         </draggable>
       </div>
     </div>
@@ -74,7 +74,6 @@ import Draggable from "vuedraggable";
 import { EditIcon, Trash2Icon } from "vue-feather-icons";
 
 import InfoCard from "./components/InfoCard";
-import Editor from "./components/Editor";
 
 export default {
   name: "app",
@@ -82,8 +81,7 @@ export default {
     EditIcon,
     Trash2Icon,
     Draggable,
-    InfoCard,
-    Editor
+    InfoCard
   },
   data() {
     return {

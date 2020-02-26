@@ -1,5 +1,6 @@
 <template>
   <div class="p-4 mb-3 bg-white justify-between items-center shadow rounded-lg">
+    <Trash2Icon @click="$emit('on-delete')" size="2x" class="p-1 focus:shadow-outline text-red-500 hover:text-red-600"/>
     <div class="flex items-center flex-col">
       <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
         <div class="menubar">
@@ -54,7 +55,6 @@
           </button>
         </div>
       </editor-menu-bar>
-
       <editor-content :editor="editor" />
     </div>
   </div>
@@ -79,7 +79,8 @@ import {
   UnderlineIcon,
   Link2Icon,
   ArrowLeftIcon,
-  ArrowRightIcon
+  ArrowRightIcon,
+  Trash2Icon
 } from "vue-feather-icons";
 
 export default {
@@ -92,7 +93,8 @@ export default {
     UnderlineIcon,
     Link2Icon,
     ArrowLeftIcon,
-    ArrowRightIcon
+    ArrowRightIcon,
+    Trash2Icon
   },
   props: {
     box: {
