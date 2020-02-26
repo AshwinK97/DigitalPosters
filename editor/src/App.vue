@@ -1,5 +1,6 @@
 <template>
   <div id="app" class="min-h-screen w-screen bg-gray-200 flex flex-col pt-16 px-16">
+    <h1>Digital Posters</h1>
     <div id="header" class="flex mb-4">
       <div class="text-center w-full">
         <draggable
