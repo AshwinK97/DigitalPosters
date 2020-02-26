@@ -1,63 +1,68 @@
 <template>
-  <div id="app" class="min-h-screen w-screen bg-gray-200 flex items-center justify-center">
-    <div class="w-full max-w-md text-center px-3">
-      <p class="mb-2 text-gray-700 font-semibold font-sans tracking-wide">List 1</p>
-      <draggable
-        tag="ul"
-        group="all-users"
-        class="draggable-list"
-        ghost-class="moving-card"
-        filter=".action-button"
-        :list="users"
-        :animation="200"
-      >
-        <editor
-          v-for="(user, index) in users"
-          :key="user.id"
-          :active="user.id === activeCard"
-          :component="user"
-          @on-colour-change="onColourChange(users, index, selectedColour)"
-          @on-close="onClose"
-          @on-delete="onDelete(users, index)"
+  <div id="app" class="min-h-screen w-screen bg-gray-200 flex flex-col pt-20 px-16">
+    <div id="header" class="flex mb-4">
+      <div class="text-center w-full">
+        <draggable
+          class="w-full px-4"
+          ghost-class="moving-card"
+          filter=".action-button"
+          :list="header"
+          :animation="200"
         >
-          <info-card
-            :user="user"
-            @on-edit="onEdit"
-            @on-delete="onDelete"
-            @click.native="toggleActiveCard(user)"
-          ></info-card>
-        </editor>
-      </draggable>
+          <info-card v-for="box in header" :key="box.id" :box="box"></info-card>
+        </draggable>
+      </div>
     </div>
-
-    <div class="w-full max-w-md md:ml-6 text-center px-3">
-      <p class="mb-2 text-gray-700 font-semibold font-sans tracking-wide">List 2</p>
-      <draggable
-        tag="ul"
-        group="all-users"
-        class="draggable-list"
-        ghost-class="moving-card"
-        filter=".action-button"
-        :list="newUsers"
-        :animation="200"
-      >
-        <editor
-          v-for="(user, index) in newUsers"
-          :key="user.id"
-          :active="user.id === activeCard"
-          :component="user"
-          @on-colour-change="onColourChange"
-          @on-close="onClose"
-          @on-delete="onDelete(newUsers, index)"
+    <div id="body" class="flex mb-4">
+      <div class="text-center w-1/3">
+        <draggable
+          class="w-full px-4"
+          group="all-users"
+          ghost-class="moving-card"
+          filter=".action-button"
+          :list="posterColOne"
+          :animation="200"
         >
-          <info-card
-            :user="user"
-            @on-edit="onEdit"
-            @on-delete="onDelete"
-            @click.native="toggleActiveCard(user)"
-          ></info-card>
-        </editor>
-      </draggable>
+          <info-card v-for="box in posterColOne" :key="box.id" :box="box"></info-card>
+        </draggable>
+      </div>
+      <div class="text-center w-1/3">
+        <draggable
+          class="w-full px-4"
+          group="all-users"
+          ghost-class="moving-card"
+          filter=".action-button"
+          :list="posterColTwo"
+          :animation="200"
+        >
+          <info-card v-for="box in posterColTwo" :key="box.id" :box="box"></info-card>
+        </draggable>
+      </div>
+      <div class="text-center w-1/3">
+        <draggable
+          class="w-full px-4"
+          group="all-users"
+          ghost-class="moving-card"
+          filter=".action-button"
+          :list="posterColThree"
+          :animation="200"
+        >
+          <info-card v-for="box in posterColThree" :key="box.id" :box="box"></info-card>
+        </draggable>
+      </div>
+    </div>
+    <div id="footer" class="flex mb-4">
+      <div class="text-center w-full">
+        <draggable
+          class="w-full px-4"
+          ghost-class="moving-card"
+          filter=".action-button"
+          :list="footer"
+          :animation="200"
+        >
+          <info-card v-for="box in footer" :key="box.id" :box="box"></info-card>
+        </draggable>
+      </div>
     </div>
   </div>
 </template>
@@ -83,76 +88,11 @@ export default {
   data() {
     return {
       activeCard: "",
-      users: [
-        {
-          id: 1,
-          name: "Adrian Schubert",
-          backgroundColor: "#fff",
-          avatar:
-            "https://pickaface.net/gallery/avatar/unr_sample_161118_2054_ynlrg.png"
-        },
-        {
-          id: 2,
-          name: "Violet Gates",
-          backgroundColor: "#fff",
-          avatar: "https://pickaface.net/gallery/avatar/freud51c8b3f65e7dc.png"
-        },
-        {
-          id: 3,
-          name: "Steve Jobs",
-          backgroundColor: "#fff",
-          avatar: "https://pickaface.net/gallery/avatar/Opi51c74d0125fd4.png"
-        },
-        {
-          id: 4,
-          name: "Yassine Smith",
-          backgroundColor: "#fff",
-          avatar:
-            "https://pickaface.net/gallery/avatar/unr_yassine_191124_2012_3gngr.png"
-        },
-        {
-          id: 5,
-          name: "Senior Saez",
-          backgroundColor: "#fff",
-          avatar:
-            "https://pickaface.net/gallery/avatar/elmedinilla541c03412955c.png"
-        }
-      ],
-      newUsers: [
-        {
-          id: 6,
-          name: "Steve Jobs",
-          backgroundColor: "#fff",
-          avatar: "https://pickaface.net/gallery/avatar/Opi51c74d0125fd4.png"
-        },
-        {
-          id: 7,
-          name: "Yassine Smith",
-          backgroundColor: "#fff",
-          avatar:
-            "https://pickaface.net/gallery/avatar/unr_yassine_191124_2012_3gngr.png"
-        },
-        {
-          id: 8,
-          name: "Senior Saez",
-          backgroundColor: "#fff",
-          avatar:
-            "https://pickaface.net/gallery/avatar/elmedinilla541c03412955c.png"
-        },
-        {
-          id: 9,
-          name: "Adrian Schubert",
-          backgroundColor: "#fff",
-          avatar:
-            "https://pickaface.net/gallery/avatar/unr_sample_161118_2054_ynlrg.png"
-        },
-        {
-          id: 10,
-          name: "Violet Gates",
-          backgroundColor: "#fff",
-          avatar: "https://pickaface.net/gallery/avatar/freud51c8b3f65e7dc.png"
-        }
-      ]
+      header: [{ id: 1 }],
+      posterColOne: [{ id: 1 }, { id: 2 }],
+      posterColTwo: [{ id: 3 }, { id: 4 }],
+      posterColThree: [{ id: 5 }, { id: 6 }],
+      footer: [{ id: 1 }]
     };
   },
   methods: {
@@ -165,12 +105,6 @@ export default {
     },
     onClose() {
       this.activeCard = "";
-    },
-    onColourChange(list, index, colour) {
-      list[index].backgroundColor = "#fefefe";
-    },
-    toggleActiveCard(card) {
-      this.activeCard = card.id;
     }
   }
 };

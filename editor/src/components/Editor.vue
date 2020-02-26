@@ -2,7 +2,7 @@
   <div class="relative">
     <div
       v-show="active"
-      class="z-10 h-full w-full absolute"
+      class="h-full w-full absolute"
       :class="{'border-4 border-teal-400 ': active}"
     >
       <div class="flex justify-end items-center p-4 mb-3">
