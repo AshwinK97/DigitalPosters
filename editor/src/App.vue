@@ -10,7 +10,12 @@
           :list="header"
           :animation="200"
         >
-          <info-card v-for="(box, index) in header" :key="box.id" :box="box" @on-delete="onDelete(header, index)"></info-card>
+          <info-card
+            v-for="(box, index) in header"
+            :key="box.id"
+            :box="box"
+            @on-delete="onDelete(header, index)"
+          ></info-card>
         </draggable>
       </div>
     </div>
@@ -24,7 +29,15 @@
           :list="posterColOne"
           :animation="200"
         >
-          <info-card v-for="(box, index) in posterColOne" :key="box.id" :box="box" @on-delete="onDelete(posterColOne, index)"></info-card>
+          <info-card
+            v-for="(box, index) in posterColOne"
+            :key="box.id"
+            :box="box"
+            @on-delete="onDelete(posterColOne, index)"
+          ></info-card>
+          <div @click="onAdd(posterColOne)" class="p-4 mb-3 bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700">
+            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+          </div>
         </draggable>
       </div>
       <div class="text-center w-1/3">
@@ -36,7 +49,12 @@
           :list="posterColTwo"
           :animation="200"
         >
-          <info-card v-for="(box, index) in posterColTwo" :key="box.id" :box="box" @on-delete="onDelete(posterColTwo, index)"></info-card>
+          <info-card
+            v-for="(box, index) in posterColTwo"
+            :key="box.id"
+            :box="box"
+            @on-delete="onDelete(posterColTwo, index)"
+          ></info-card>
         </draggable>
       </div>
       <div class="text-center w-1/3">
@@ -48,7 +66,12 @@
           :list="posterColThree"
           :animation="200"
         >
-          <info-card v-for="(box, index) in posterColThree" :key="box.id" :box="box" @on-delete="onDelete(posterColThree, index)"></info-card>
+          <info-card
+            v-for="(box, index) in posterColThree"
+            :key="box.id"
+            :box="box"
+            @on-delete="onDelete(posterColThree, index)"
+          ></info-card>
         </draggable>
       </div>
     </div>
@@ -61,7 +84,12 @@
           :list="footer"
           :animation="200"
         >
-          <info-card v-for="(box, index) in footer" :key="box.id" :box="box" @on-delete="onDelete(footer, index)"></info-card>
+          <info-card
+            v-for="(box, index) in footer"
+            :key="box.id"
+            :box="box"
+            @on-delete="onDelete(footer, index)"
+          ></info-card>
         </draggable>
       </div>
     </div>
@@ -72,14 +100,14 @@
 import "./assets/css/tailwind.css";
 
 import Draggable from "vuedraggable";
-import { EditIcon, Trash2Icon } from "vue-feather-icons";
+import { Trash2Icon, PlusCircleIcon } from "vue-feather-icons";
 
 import InfoCard from "./components/InfoCard";
 
 export default {
   name: "app",
   components: {
-    EditIcon,
+    PlusCircleIcon,
     Trash2Icon,
     Draggable,
     InfoCard
@@ -95,15 +123,15 @@ export default {
     };
   },
   methods: {
-    onEdit(user) {
-      alert(`Editing ${user.name}`);
-    },
     onDelete(list, index) {
       list.splice(index, 1);
       this.onClose();
     },
-    onClose() {
-      this.activeCard = "";
+    onAdd(list) {
+      list.push({id: this.generateId()});
+    },
+    generateId() {
+      return Math.random().toString(36).substr(2, 9);
     }
   }
 };
