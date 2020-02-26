@@ -1,13 +1,61 @@
 <template>
-  <div class="p-4 mb-3 bg-white justify-between items-center shadow rounded-lg cursor-move">
+  <div class="p-4 mb-3 bg-white justify-between items-center shadow rounded-lg">
     <div class="flex items-center flex-col">
       <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
-        <button :class="{ 'is-active': isActive.bold() }" @click="commands.bold">Bold</button>
+        <div class="menubar">
+          <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.bold() }"
+            @click="commands.bold"
+          >
+            <bold-icon />
+          </button>
+
+          <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.italic() }"
+            @click="commands.italic"
+          >
+            <italic-icon />
+          </button>
+
+          <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.underline() }"
+            @click="commands.underline"
+          >
+            <underline-icon />
+          </button>
+
+          <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.heading({ level: 1 }) }"
+            @click="commands.heading({ level: 1 })"
+          >H1</button>
+
+          <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.heading({ level: 2 }) }"
+            @click="commands.heading({ level: 2 })"
+          >H2</button>
+
+          <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.heading({ level: 3 }) }"
+            @click="commands.heading({ level: 3 })"
+          >H3</button>
+
+          <button class="menubar__button" @click="commands.undo">
+            <arrow-left-icon />
+          </button>
+
+          <button class="menubar__button" @click="commands.redo">
+            <arrow-right-icon />
+          </button>
+        </div>
       </editor-menu-bar>
-      <editor-content
-        :editor="editor"
-        class="ml-2 text-gray-700 font-semibold font-sans tracking-wide"
-      />
+
+      <editor-content :editor="editor" />
     </div>
   </div>
 </template>
@@ -15,19 +63,36 @@
 <script>
 import { Editor, EditorContent, EditorMenuBar } from "tiptap";
 import {
-  HardBreak,
   Heading,
-  Image,
+  Link,
   Bold,
-  Code,
-  Italic
+  Italic,
+  Strike,
+  Underline,
+  History,
+  Image
 } from "tiptap-extensions";
+
+import {
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  Link2Icon,
+  ArrowLeftIcon,
+  ArrowRightIcon
+} from "vue-feather-icons";
 
 export default {
   name: "info-card",
   components: {
     EditorContent,
-    EditorMenuBar
+    EditorMenuBar,
+    BoldIcon,
+    ItalicIcon,
+    UnderlineIcon,
+    Link2Icon,
+    ArrowLeftIcon,
+    ArrowRightIcon
   },
   props: {
     box: {
@@ -41,8 +106,38 @@ export default {
       // then passed to the `EditorContent` component as a `prop`
       editor: new Editor({
         editable: true,
-        content: `<p>${this.box.id}</p>`,
-        extensions: [new Bold(), new Image()]
+        content: `
+          <h2>
+            Hi there,
+          </h2>
+          <p>
+            this is a very <em>basic</em> example of tiptap.
+          </p>
+          <pre><code>body { display: none; }</code></pre>
+          <ul>
+            <li>
+              A regular list
+            </li>
+            <li>
+              With regular items
+            </li>
+          </ul>
+          <blockquote>
+            It's amazing 👏
+            <br />
+            – mom
+          </blockquote>
+        `,
+        extensions: [
+          new Heading({ levels: [1, 2, 3] }),
+          new Link(),
+          new Bold(),
+          new Italic(),
+          new Strike(),
+          new Underline(),
+          new History(),
+          new Image()
+        ]
       })
     };
   },
@@ -52,3 +147,49 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+$color-black: #000000;
+$color-white: #ffffff;
+$color-grey: #dddddd;
+
+.menubar {
+  margin-bottom: 1rem;
+  transition: visibility 0.2s 0.4s, opacity 0.2s 0.4s;
+
+  &.is-hidden {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  &.is-focused {
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 0.2s, opacity 0.2s;
+  }
+
+  &__button {
+    font-weight: bold;
+    display: inline-flex;
+    background: transparent;
+    border: 0;
+    color: $color-black;
+    padding: 0.2rem 0.5rem;
+    margin-right: 0.2rem;
+    border-radius: 3px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba($color-black, 0.05);
+    }
+
+    &.is-active {
+      background-color: rgba($color-black, 0.1);
+    }
+  }
+
+  span#{&}__button {
+    font-size: 13.3333px;
+  }
+}
+</style>
