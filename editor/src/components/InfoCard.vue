@@ -59,7 +59,7 @@
           </button>
         </div>
       </editor-menu-bar>
-      <editor-content :editor="editor" class="w-full" />
+      <editor-content :editor="editor" class="w-full text-xl" />
     </div>
   </div>
 </template>
@@ -148,32 +148,26 @@ export default {
           this.json = getJSON();
         }
       }),
-      json: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: "This is some inserted text. 👋"
-              }
-            ]
-          }
-        ]
-      }
+      json: this.box.body
     };
   },
   watch: {
     json(content) {
-      localStorage[this.box.id] = JSON.stringify(content);
+      this.$emit('update:box', {id: this.box.id, body: content});
+      // localStorage[this.box.id] = JSON.stringify(content);
+    },
+    box() {
+      this.json = this.box.body;
+      this.editor.setContent(this.json);
     }
   },
   mounted() {
-    if (localStorage[this.box.id]) {
-      // you can pass a json document
-      this.editor.setContent(JSON.parse(localStorage[this.box.id]), true);
-    }
+    this.json = this.box.body;
+    this.editor.setContent(this.json, true);
+    // if (localStorage[this.box.id] !== undefined) {
+    //   // you can pass a json document
+    //   this.editor.setContent(JSON.parse(localStorage[this.box.id]), true);
+    // }
   },
   beforeDestroy() {
     // Always destroy your editor instance when it's no longer needed
