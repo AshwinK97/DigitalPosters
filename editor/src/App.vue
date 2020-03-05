@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="min-h-screen w-screen flex flex-col pt-16 px-16">
+  <div id="app" class="min-h-screen w-screen flex flex-col px-4 lg:pt-16 lg:px-16">
     <modal class="rounded" name="onSave">
       <div
         class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3"
@@ -44,8 +44,8 @@
         </draggable>
       </div>
     </div>
-    <div id="body" class="flex mb-4">
-      <div class="text-center w-1/3">
+    <div id="body" class="flex flex-col lg:flex-row mb-4">
+      <div class="text-center w-full">
         <draggable
           class="w-full px-4"
           group="all-users"
@@ -68,7 +68,7 @@
           </div>
         </draggable>
       </div>
-      <div class="text-center w-1/3">
+      <div class="text-center w-full">
         <draggable
           class="w-full px-4"
           group="all-users"
@@ -91,7 +91,7 @@
           </div>
         </draggable>
       </div>
-      <div class="text-center w-1/3">
+      <div class="text-center w-full">
         <draggable
           class="w-full px-4"
           group="all-users"
@@ -155,6 +155,7 @@ export default {
   },
   data() {
     return {
+      userID: 1,
       header: [
         {
           id: "yle0mxm4q",
