@@ -21,11 +21,11 @@
           class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded"
         >Save</button>
         <button
-          @click="onLoad"
+          @click="onLoad()"
           class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded"
         >Load</button>
         <button
-          @click="onPreview"
+          @click="onPreview()"
           class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
         >Preview</button>
       </div>
@@ -36,14 +36,17 @@
           class="w-full px-4"
           ghost-class="moving-card"
           filter=".action-button"
+          disabled="preview"
           :list="header"
           :animation="200"
         >
           <info-card
             v-for="(box, index) in header"
             :key="box.id"
-            :box="box"
+            :box.sync="header[index]"
+            :preview="preview"
             @on-delete="onDelete(header, index)"
+            @on-change="onChange($event, header, index)"
           ></info-card>
         </draggable>
       </div>
@@ -55,18 +58,22 @@
           group="all-users"
           ghost-class="moving-card"
           filter=".action-button"
+          disabled="preview"
           :list="posterColOne"
           :animation="200"
         >
           <info-card
             v-for="(box, index) in posterColOne"
             :key="box.id"
-            :box.sync="box"
+            :box.sync="posterColOne[index]"
+            :preview="preview"
             @on-delete="onDelete(posterColOne, index)"
+            @on-change="onChange($event, posterColOne, index)"
           ></info-card>
           <div
             @click="onAdd(posterColOne)"
-            class="p-4 mb-3 bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
+            v-if="!preview"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
           >
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
@@ -78,18 +85,22 @@
           group="all-users"
           ghost-class="moving-card"
           filter=".action-button"
+          disabled="preview"
           :list="posterColTwo"
           :animation="200"
         >
           <info-card
             v-for="(box, index) in posterColTwo"
             :key="box.id"
-            :box="box"
+            :box.sync="posterColTwo[index]"
+            :preview.sync="preview"
             @on-delete="onDelete(posterColTwo, index)"
+            @on-change="onChange($event, posterColTwo, index)"
           ></info-card>
           <div
             @click="onAdd(posterColTwo)"
-            class="p-4 mb-3 bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
+            v-if="!preview"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
           >
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
@@ -101,6 +112,7 @@
           group="all-users"
           ghost-class="moving-card"
           filter=".action-button"
+          disabled="preview"
           :list="posterColThree"
           :animation="200"
         >
@@ -108,12 +120,14 @@
             v-for="(box, index) in posterColThree"
             :key="box.id"
             :box.sync="posterColThree[index]"
+            :preview="preview"
             @on-delete="onDelete(posterColThree, index)"
             @on-change="onChange($event, posterColThree, index)"
           ></info-card>
           <div
             @click="onAdd(posterColThree)"
-            class="p-4 mb-3 bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
+            v-if="!preview"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
           >
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
@@ -126,14 +140,17 @@
           class="w-full px-4"
           ghost-class="moving-card"
           filter=".action-button"
+          disabled="preview"
           :list="footer"
           :animation="200"
         >
           <info-card
             v-for="(box, index) in footer"
             :key="box.id"
-            :box="box"
+            :box.sync="footer[index]"
+            :preview="preview"
             @on-delete="onDelete(footer, index)"
+            @on-change="onChange($event, footer, index)"
           ></info-card>
         </draggable>
       </div>
@@ -159,6 +176,7 @@ export default {
   },
   data() {
     return {
+      preview: false,
       userID: 1,
       header: [
         {
@@ -308,6 +326,9 @@ export default {
       return Math.random()
         .toString(36)
         .substr(2, 9);
+    },
+    onPreview() {
+      this.preview = !this.preview;
     }
   },
   computed: {

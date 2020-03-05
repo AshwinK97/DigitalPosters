@@ -1,12 +1,13 @@
 <template>
   <div class="p-4 mb-3 bg-white justify-between items-center shadow rounded-lg">
-    <Trash2Icon
+    <Trash2Icon 
+      v-if="!preview"
       @click="$emit('on-delete')"
       size="2x"
       class="p-1 focus:shadow-outline text-red-500 hover:text-red-600"
     />
     <div class="flex items-center flex-col w-full">
-      <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
+      <editor-menu-bar v-if="!preview" :editor="editor" v-slot="{ commands, isActive }">
         <div class="menubar">
           <button
             class="menubar__button"
@@ -125,6 +126,10 @@ export default {
     box: {
       type: Object,
       default: () => ({})
+    },
+    preview: {
+      type: Boolean,
+      default: () => (false)
     }
   },
   data() {
@@ -132,7 +137,7 @@ export default {
       // Create an `Editor` instance with some default content. The editor is
       // then passed to the `EditorContent` component as a `prop`
       editor: new Editor({
-        editable: true,
+        editable: !this.preview,
         content: `
           <h2>
             Hi there,
@@ -187,6 +192,7 @@ export default {
   },
   mounted() {
     this.json = this.box.body;
+    this.editor.editable = this.preview;
     this.editor.setContent(this.json, true);
     // if (localStorage[this.box.id] !== undefined) {
     //   // you can pass a json document
