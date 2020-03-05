@@ -51,13 +51,13 @@
             @click="commands.heading({ level: 3 })"
           >H3</button>
 
-          <!-- <button
+          <button
             class="menubar__button"
             :class="{ 'is-active': isActive.bullet_list() }"
             @click="commands.bullet_list"
           >
             <list-icon />
-          </button> -->
+          </button>
 
           <!-- <button
             class="menubar__button"
@@ -76,7 +76,7 @@
           </button>
         </div>
       </editor-menu-bar>
-      <editor-content :editor="editor" class="w-full text-xl" />
+      <editor-content :editor="editor" class="w-full px-6 pb-4 text-left text-xl" />
     </div>
   </div>
 </template>
@@ -137,7 +137,7 @@ export default {
       // Create an `Editor` instance with some default content. The editor is
       // then passed to the `EditorContent` component as a `prop`
       editor: new Editor({
-        editable: !this.preview,
+        editable: true,
         content: `
           <h2>
             Hi there,

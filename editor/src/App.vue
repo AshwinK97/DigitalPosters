@@ -12,31 +12,34 @@
         <p class="text-base">{{allPosterData}}</p>
       </div>
     </modal>
-    <modal name="onLoad">hello, world!</modal>
+    <modal name="onPublish">Publish coming soon!</modal>
     <div class="w-full flex justify-between items-center">
       <h1>Digital Posters</h1>
       <div>
         <button
+          v-if="!preview"
           @click="onSave()"
           class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded"
         >Save</button>
         <button
-          @click="onLoad()"
+          v-if="preview"
+          @click="onPublish()"
           class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded"
-        >Load</button>
+        >Publish</button>
         <button
           @click="onPreview()"
-          class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
-        >Preview</button>
+          class="text-white font-bold py-2 px-4 rounded"
+          :class="preview ? 'bg-orange-600 hover:bg-orange-500' : 'bg-orange-500 hover:bg-orange-600'"
+        >Turn Preview {{ preview ? "Off" : "On"}}</button>
       </div>
     </div>
-    <div id="header" class="flex mb-4">
+    <div id="header" class="flex-col mb-4">
       <div class="text-center w-full">
         <draggable
           class="w-full px-4"
           ghost-class="moving-card"
           filter=".action-button"
-          disabled="preview"
+          :disabled="preview"
           :list="header"
           :animation="200"
         >
@@ -50,15 +53,41 @@
           ></info-card>
         </draggable>
       </div>
+      <div class="flex text-center w-full">
+        <div class="text-center w-1/6 px-4">
+          <info-card
+            :key="logo.id"
+            :box.sync="logo"
+            :preview="preview"
+            @on-change="onChange($event, logo)"
+          ></info-card>
+        </div>
+        <div class="text-center w-2/3 px-4">
+          <info-card
+            :key="credits.id"
+            :box.sync="credits"
+            :preview="preview"
+            @on-change="onChange($event, credits)"
+          ></info-card>
+        </div>
+        <div class="text-center w-1/6 px-4">
+          <info-card
+            :key="qr.id"
+            :box.sync="qr"
+            :preview="preview"
+            @on-change="onChange($event, qr)"
+          ></info-card>
+        </div>
+      </div>
     </div>
     <div id="body" class="flex flex-col lg:flex-row mb-4">
-      <div class="text-center w-full">
+      <div class="text-center w-1/3">
         <draggable
           class="w-full px-4"
           group="all-users"
           ghost-class="moving-card"
           filter=".action-button"
-          disabled="preview"
+          :disabled="preview"
           :list="posterColOne"
           :animation="200"
         >
@@ -79,13 +108,13 @@
           </div>
         </draggable>
       </div>
-      <div class="text-center w-full">
+      <div class="text-center w-1/3">
         <draggable
           class="w-full px-4"
           group="all-users"
           ghost-class="moving-card"
           filter=".action-button"
-          disabled="preview"
+          :disabled="preview"
           :list="posterColTwo"
           :animation="200"
         >
@@ -106,13 +135,13 @@
           </div>
         </draggable>
       </div>
-      <div class="text-center w-full">
+      <div class="text-center w-1/3">
         <draggable
           class="w-full px-4"
           group="all-users"
           ghost-class="moving-card"
           filter=".action-button"
-          disabled="preview"
+          :disabled="preview"
           :list="posterColThree"
           :animation="200"
         >
@@ -140,7 +169,7 @@
           class="w-full px-4"
           ghost-class="moving-card"
           filter=".action-button"
-          disabled="preview"
+          :disabled="preview"
           :list="footer"
           :animation="200"
         >
@@ -193,6 +222,27 @@ export default {
           }
         }
       ],
+      logo: {
+        id: "1234546",
+        body: {
+          type: "doc",
+          content: [{}]
+        }
+      },
+      credits: {
+        id: "12asdf46",
+        body: {
+          type: "doc",
+          content: [{}]
+        }
+      },
+      qr: {
+        id: "kj23jk4",
+        body: {
+          type: "doc",
+          content: [{}]
+        }
+      },
       posterColOne: [
         {
           id: "kn0x8hwy0",
@@ -286,13 +336,16 @@ export default {
     onChange(box, list, index) {
       list[index] = box;
     },
+    onChange(box, item) {
+      item = box;
+    },
     onAdd(list) {
       list.push({ id: this.generateId() });
     },
     onSave() {
       this.$modal.show("onSave");
     },
-    onLoad() {
+    onPublish() {
       this.$set(this.posterColThree, 0, {
         id: "pyng271w9",
         body: {
@@ -320,7 +373,7 @@ export default {
       //     ]
       //   }
       // };
-      // this.$modal.show("onLoad");
+      // this.$modal.show("onPublish");
     },
     generateId() {
       return Math.random()
