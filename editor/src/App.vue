@@ -18,12 +18,16 @@
       <div>
         <button
           @click="onSave()"
-          class="mr-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded"
         >Save</button>
         <button
           @click="onLoad"
-          class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+          class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded"
         >Load</button>
+        <button
+          @click="onPreview"
+          class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
+        >Preview</button>
       </div>
     </div>
     <div id="header" class="flex mb-4">
@@ -311,31 +315,31 @@ export default {
       const headerData = [
         {
           name: "header",
-          content: this.header.map(box => (box))
+          content: this.header.map(box => box)
         }
       ];
       const posterColOneData = [
         {
           name: "posterColOne",
-          content: this.posterColOne.map(box => (box))
+          content: this.posterColOne.map(box => box)
         }
       ];
       const posterColTwoData = [
         {
           name: "posterColTwo",
-          content: this.posterColTwo.map(box => (box))
+          content: this.posterColTwo.map(box => box)
         }
       ];
       const posterColThreeData = [
         {
           name: "posterColThree",
-          content: this.posterColThree.map(box => (box))
+          content: this.posterColThree.map(box => box)
         }
       ];
       const footerData = [
         {
           name: "footer",
-          content: this.footer.map(box => (box))
+          content: this.footer.map(box => box)
         }
       ];
 

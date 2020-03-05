@@ -1,12 +1,12 @@
 <template>
   <div class="p-4 mb-3 bg-white justify-between items-center shadow rounded-lg">
-    <!-- <Trash2Icon
+    <Trash2Icon
       @click="$emit('on-delete')"
       size="2x"
       class="p-1 focus:shadow-outline text-red-500 hover:text-red-600"
-    /> -->
+    />
     <div class="flex items-center flex-col w-full">
-      <!-- <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
+      <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
         <div class="menubar">
           <button
             class="menubar__button"
@@ -50,6 +50,22 @@
             @click="commands.heading({ level: 3 })"
           >H3</button>
 
+          <!-- <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.bullet_list() }"
+            @click="commands.bullet_list"
+          >
+            <list-icon />
+          </button> -->
+
+          <!-- <button
+            class="menubar__button"
+            :class="{ 'is-active': isActive.ordered_list() }"
+            @click="commands.ordered_list"
+          >
+            <icon name="ol" />
+          </button> -->
+
           <button class="menubar__button" @click="commands.undo">
             <arrow-left-icon />
           </button>
@@ -58,7 +74,7 @@
             <arrow-right-icon />
           </button>
         </div>
-      </editor-menu-bar> -->
+      </editor-menu-bar>
       <editor-content :editor="editor" class="w-full text-xl" />
     </div>
   </div>
@@ -74,7 +90,10 @@ import {
   Strike,
   Underline,
   History,
-  Image
+  Image,
+  OrderedList,
+  BulletList,
+  ListItem
 } from "tiptap-extensions";
 
 import {
@@ -84,7 +103,8 @@ import {
   Link2Icon,
   ArrowLeftIcon,
   ArrowRightIcon,
-  Trash2Icon
+  Trash2Icon,
+  ListIcon
 } from "vue-feather-icons";
 
 export default {
@@ -98,7 +118,8 @@ export default {
     Link2Icon,
     ArrowLeftIcon,
     ArrowRightIcon,
-    Trash2Icon
+    Trash2Icon,
+    ListIcon
   },
   props: {
     box: {
@@ -142,7 +163,10 @@ export default {
           new Strike(),
           new Underline(),
           new History(),
-          new Image()
+          new Image(),
+          new OrderedList(),
+          new BulletList(),
+          new ListItem()
         ],
         onUpdate: ({ getJSON }) => {
           this.json = getJSON();
@@ -153,7 +177,7 @@ export default {
   },
   watch: {
     json(content) {
-      this.$emit('update:box', {id: this.box.id, body: content});
+      this.$emit("update:box", { id: this.box.id, body: content });
       // localStorage[this.box.id] = JSON.stringify(content);
     },
     box() {
