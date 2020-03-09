@@ -31,6 +31,23 @@ const savePoster = data => {
   });
 };
 
+const loadPoster = data => {
+  return new Promise((resolve, reject) => {
+    client.connect(err => {
+      const db = client.db("eposter");
+      const collection = db.collection("posters");
+      collection.find({userID: data}).toArray((err, results) => {
+        if (err) {
+          reject(err);
+        }
+        console.log(results);
+        resolve(results);
+      });
+    });
+  });
+};
+
 module.exports = {
-  savePoster
+  savePoster,
+  loadPoster
 };
