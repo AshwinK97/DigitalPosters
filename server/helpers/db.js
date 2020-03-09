@@ -6,7 +6,7 @@ const client = new MongoClient(config.url, { useNewUrlParser: true });
 const savePoster = data => {
   client.connect(err => {
     const db = client.db("eposter");
-    var collection = db.collection("posters");
+    const collection = db.collection("posters");
     collection.find({ userID: data.userID }).toArray((error, results) => {
       if (error) {
         console.error(error);
