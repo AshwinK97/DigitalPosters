@@ -182,8 +182,8 @@ export default {
   },
   watch: {
     json(content) {
-      this.$emit("update:box", { id: this.box.id, body: content });
-      // localStorage[this.box.id] = JSON.stringify(content);
+      // this.$emit("update:box", { id: this.box.id, body: content });
+      localStorage[this.box.id] = JSON.stringify(content);
     },
     box() {
       this.json = this.box.body;
@@ -194,10 +194,10 @@ export default {
     this.json = this.box.body;
     this.editor.editable = this.preview;
     this.editor.setContent(this.json, true);
-    // if (localStorage[this.box.id] !== undefined) {
-    //   // you can pass a json document
-    //   this.editor.setContent(JSON.parse(localStorage[this.box.id]), true);
-    // }
+    if (localStorage[this.box.id] !== undefined) {
+      // you can pass a json document
+      this.editor.setContent(JSON.parse(localStorage[this.box.id]), true);
+    }
   },
   beforeDestroy() {
     // Always destroy your editor instance when it's no longer needed

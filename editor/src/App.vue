@@ -22,6 +22,11 @@
           class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded"
         >Save</button>
         <button
+          v-if="!preview"
+          @click="onLoad()"
+          class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 mr-4 rounded"
+        >Load</button>
+        <button
           v-if="preview"
           @click="onPublish()"
           class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded"
@@ -46,42 +51,37 @@
           <info-card
             v-for="(box, index) in header"
             :key="box.id"
-            :box.sync="header[index]"
+            :box="header[index]"
             :preview="preview"
             @on-delete="onDelete(header, index)"
             @on-change="onChange($event, header, index)"
           ></info-card>
         </draggable>
       </div>
-      <div class="flex text-center w-full">
-        <div class="text-center w-1/6 px-4">
+      <div class="flex flex-col md:flex-row text-center w-full">
+        <div class="text-center w-full md:w-1/6 px-4">
           <info-card
             :key="logo.id"
-            :box.sync="logo"
+            :box="logo[0]"
             :preview="preview"
             @on-change="onChange($event, logo)"
           ></info-card>
         </div>
-        <div class="text-center w-2/3 px-4">
+        <div class="text-center w-full md:w-2/3 px-4">
           <info-card
             :key="credits.id"
-            :box.sync="credits"
+            :box="credits[0]"
             :preview="preview"
             @on-change="onChange($event, credits)"
           ></info-card>
         </div>
-        <div class="text-center w-1/6 px-4">
-          <info-card
-            :key="qr.id"
-            :box.sync="qr"
-            :preview="preview"
-            @on-change="onChange($event, qr)"
-          ></info-card>
+        <div class="text-center w-full md:w-1/6 px-4">
+          <info-card :key="qr.id" :box="qr[0]" :preview="preview" @on-change="onChange($event, qr)"></info-card>
         </div>
       </div>
     </div>
     <div id="body" class="flex flex-col lg:flex-row mb-4">
-      <div class="text-center w-1/3">
+      <div class="text-center w-full md:w-1/3">
         <draggable
           class="w-full px-4"
           group="all-users"
@@ -94,7 +94,7 @@
           <info-card
             v-for="(box, index) in posterColOne"
             :key="box.id"
-            :box.sync="posterColOne[index]"
+            :box="posterColOne[index]"
             :preview="preview"
             @on-delete="onDelete(posterColOne, index)"
             @on-change="onChange($event, posterColOne, index)"
@@ -108,7 +108,7 @@
           </div>
         </draggable>
       </div>
-      <div class="text-center w-1/3">
+      <div class="text-center w-full md:w-1/3">
         <draggable
           class="w-full px-4"
           group="all-users"
@@ -121,8 +121,8 @@
           <info-card
             v-for="(box, index) in posterColTwo"
             :key="box.id"
-            :box.sync="posterColTwo[index]"
-            :preview.sync="preview"
+            :box="posterColTwo[index]"
+            :preview="preview"
             @on-delete="onDelete(posterColTwo, index)"
             @on-change="onChange($event, posterColTwo, index)"
           ></info-card>
@@ -135,7 +135,7 @@
           </div>
         </draggable>
       </div>
-      <div class="text-center w-1/3">
+      <div class="text-center w-full md:w-1/3">
         <draggable
           class="w-full px-4"
           group="all-users"
@@ -148,7 +148,7 @@
           <info-card
             v-for="(box, index) in posterColThree"
             :key="box.id"
-            :box.sync="posterColThree[index]"
+            :box="posterColThree[index]"
             :preview="preview"
             @on-delete="onDelete(posterColThree, index)"
             @on-change="onChange($event, posterColThree, index)"
@@ -176,7 +176,7 @@
           <info-card
             v-for="(box, index) in footer"
             :key="box.id"
-            :box.sync="footer[index]"
+            :box="footer[index]"
             :preview="preview"
             @on-delete="onDelete(footer, index)"
             @on-change="onChange($event, footer, index)"
@@ -195,6 +195,8 @@ import { Trash2Icon, PlusCircleIcon } from "vue-feather-icons";
 
 import InfoCard from "./components/InfoCard";
 
+import loadData from "./data/posterJSON.json";
+
 export default {
   name: "app",
   components: {
@@ -207,6 +209,7 @@ export default {
     return {
       preview: false,
       userID: 1,
+      posterID: 1,
       header: [
         {
           id: "yle0mxm4q",
@@ -222,27 +225,33 @@ export default {
           }
         }
       ],
-      logo: {
-        id: "1234546",
-        body: {
-          type: "doc",
-          content: [{}]
+      logo: [
+        {
+          id: "1234546",
+          body: {
+            type: "doc",
+            content: []
+          }
         }
-      },
-      credits: {
-        id: "12asdf46",
-        body: {
-          type: "doc",
-          content: [{}]
+      ],
+      credits: [
+        {
+          id: "12asdf46",
+          body: {
+            type: "doc",
+            content: []
+          }
         }
-      },
-      qr: {
-        id: "kj23jk4",
-        body: {
-          type: "doc",
-          content: [{}]
+      ],
+      qr: [
+        {
+          id: "kj23jk4",
+          body: {
+            type: "doc",
+            content: []
+          }
         }
-      },
+      ],
       posterColOne: [
         {
           id: "kn0x8hwy0",
@@ -343,7 +352,21 @@ export default {
       list.push({ id: this.generateId() });
     },
     onSave() {
+      localStorage['posterSave'] = JSON.stringify(this.allPosterData);
+
       this.$modal.show("onSave");
+    },
+    onLoad() {
+      // console.log(loadData);
+      const posterContent = loadData.poster.content;
+
+      posterContent.forEach(section => {
+        const name = section.name;
+
+        section.content.forEach((content, index) => {
+          this.$set(this.$data[name], index, content);
+        });
+      });
     },
     onPublish() {
       this.$set(this.posterColThree, 0, {
@@ -392,10 +415,43 @@ export default {
           content: this.header.map(box => box)
         }
       ];
+      const logoData = [
+        {
+          name: "logo",
+          content: this.logo.map(box => box)
+        }
+      ];
+      const creditsData = [
+        {
+          name: "credits",
+          content: this.credits.map(box => box)
+        }
+      ];
+      const qrData = [
+        {
+          name: "qr",
+          content: this.qr.map(box => box)
+        }
+      ];
       const posterColOneData = [
         {
           name: "posterColOne",
-          content: this.posterColOne.map(box => box)
+          content: this.posterColOne.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
       const posterColTwoData = [
@@ -418,13 +474,22 @@ export default {
       ];
 
       const allPosterData = headerData.concat(
+        logoData,
+        creditsData,
+        qrData,
         posterColOneData,
         posterColTwoData,
         posterColThreeData,
         footerData
       );
 
-      return allPosterData;
+      return {
+        userID: this.userID,
+        poster: {
+          id: this.posterID,
+          content: allPosterData
+        }
+      };
     }
   }
 };
