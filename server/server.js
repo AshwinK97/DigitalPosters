@@ -10,11 +10,6 @@ const app = express();
 app.use(fileUpload());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-// enable body parser for json requests
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-// allow requests from selected domains
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -23,7 +18,6 @@ app.use((req, res, next) => {
 
 app.post("/savePoster", (req, res) => {
   // const posterData = req.body
-
   // console.log(posterData);
   // let posterData = fs.readFileSync("./posterJSON.json");
   // const posterInfo = JSON.parse(posterData);
