@@ -1,41 +1,34 @@
 <template>
   <div id="app" class="min-h-screen w-screen flex flex-col px-4 lg:pt-16 lg:px-16">
     <modal class="rounded" name="onSave">
-      <div
-        class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3"
-        role="alert"
-      >
+      <div class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3" role="alert">
         <p class="font-bold">Informational message</p>
         <p class="text-sm">You are about to save the contents of this poster! Please check the data.</p>
       </div>
       <div class="text-green-700 p-8">
-        <p class="text-base">{{allPosterData}}</p>
+        <p class="text-base">{{ allPosterData }}</p>
       </div>
     </modal>
     <modal name="onPublish">Publish coming soon!</modal>
     <div class="w-full flex justify-between items-center">
       <h1>Digital Posters</h1>
       <div>
-        <button
-          v-if="!preview"
-          @click="onSave()"
-          class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded"
-        >Save</button>
-        <button
-          v-if="!preview"
-          @click="onLoad()"
-          class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 mr-4 rounded"
-        >Load</button>
-        <button
-          v-if="preview"
-          @click="onPublish()"
-          class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded"
-        >Publish</button>
+        <button v-if="!preview" @click="onSave()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded">
+          Save
+        </button>
+        <button v-if="!preview" @click="onLoad()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 mr-4 rounded">
+          Load
+        </button>
+        <button v-if="preview" @click="onPublish()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded">
+          Publish
+        </button>
         <button
           @click="onPreview()"
           class="text-white font-bold py-2 px-4 rounded"
           :class="preview ? 'bg-orange-600 hover:bg-orange-500' : 'bg-orange-500 hover:bg-orange-600'"
-        >Turn Preview {{ preview ? "Off" : "On"}}</button>
+        >
+          Turn Preview {{ preview ? "Off" : "On" }}
+        </button>
       </div>
     </div>
     <div id="header" class="flex-col mb-4">
@@ -60,20 +53,10 @@
       </div>
       <div class="flex flex-col md:flex-row text-center w-full">
         <div class="text-center w-full md:w-1/6 px-4">
-          <info-card
-            :key="logo.id"
-            :box="logo[0]"
-            :preview="preview"
-            @on-change="onChange($event, logo)"
-          ></info-card>
+          <info-card :key="logo.id" :box="logo[0]" :preview="preview" @on-change="onChange($event, logo)"></info-card>
         </div>
         <div class="text-center w-full md:w-2/3 px-4">
-          <info-card
-            :key="credits.id"
-            :box="credits[0]"
-            :preview="preview"
-            @on-change="onChange($event, credits)"
-          ></info-card>
+          <info-card :key="credits.id" :box="credits[0]" :preview="preview" @on-change="onChange($event, credits)"></info-card>
         </div>
         <div class="text-center w-full md:w-1/6 px-4">
           <info-card :key="qr.id" :box="qr[0]" :preview="preview" @on-change="onChange($event, qr)"></info-card>
@@ -198,6 +181,7 @@ import InfoCard from "./components/InfoCard";
 import loadData from "./data/posterJSON.json";
 
 import axios from "axios";
+import config from "../config.json";
 
 export default {
   name: "app",
@@ -358,7 +342,7 @@ export default {
       // localStorage["posterSave"] = JSON.stringify(data);
 
       axios
-        .post("http://localhost:3000/savePoster", data)
+        .post(config.serverUrl + "/savePoster", data)
         .then(function(response) {
           console.log(response);
         })
@@ -373,7 +357,7 @@ export default {
       // const posterContent = loadData.poster.content;
       const that = this;
       axios
-        .post("http://localhost:3000/loadPoster", { userID: this.userID })
+        .post(config.serverUrl + "/loadPoster", { userID: this.userID })
         .then(function(response) {
           const posterData = response.data;
           console.log(posterData);
