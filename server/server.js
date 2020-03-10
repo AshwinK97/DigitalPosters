@@ -55,4 +55,8 @@ app.get("/getImage", (req, res) => {
   });
 });
 
+app.get("/test", (req, res) => {
+  res.status(200).send("Server is running!");
+});
+
 app.listen(config.port, () => console.log(`Server listening on port: ${config.port}`));
