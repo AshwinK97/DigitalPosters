@@ -1,12 +1,13 @@
 <template>
   <div class="p-4 mb-3 bg-white justify-between items-center shadow rounded-lg">
-    <Trash2Icon
+    <Trash2Icon 
+      v-if="!preview"
       @click="$emit('on-delete')"
       size="2x"
       class="p-1 focus:shadow-outline text-red-500 hover:text-red-600"
     />
     <div class="flex items-center flex-col w-full">
-      <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
+      <editor-menu-bar v-if="!preview" :editor="editor" v-slot="{ commands, isActive }">
         <div class="menubar">
           <button
             class="menubar__button"
@@ -50,13 +51,13 @@
             @click="commands.heading({ level: 3 })"
           >H3</button>
 
-          <!-- <button
+          <button
             class="menubar__button"
             :class="{ 'is-active': isActive.bullet_list() }"
             @click="commands.bullet_list"
           >
             <list-icon />
-          </button> -->
+          </button>
 
           <!-- <button
             class="menubar__button"
@@ -75,7 +76,7 @@
           </button>
         </div>
       </editor-menu-bar>
-      <editor-content :editor="editor" class="w-full text-xl" />
+      <editor-content :editor="editor" class="w-full px-6 pb-4 text-left text-xl" />
     </div>
   </div>
 </template>
@@ -125,6 +126,10 @@ export default {
     box: {
       type: Object,
       default: () => ({})
+    },
+    preview: {
+      type: Boolean,
+      default: () => (false)
     }
   },
   data() {
@@ -177,8 +182,8 @@ export default {
   },
   watch: {
     json(content) {
-      this.$emit("update:box", { id: this.box.id, body: content });
-      // localStorage[this.box.id] = JSON.stringify(content);
+      // this.$emit("update:box", { id: this.box.id, body: content });
+      localStorage[this.box.id] = JSON.stringify(content);
     },
     box() {
       this.json = this.box.body;
@@ -187,11 +192,12 @@ export default {
   },
   mounted() {
     this.json = this.box.body;
+    this.editor.editable = this.preview;
     this.editor.setContent(this.json, true);
-    // if (localStorage[this.box.id] !== undefined) {
-    //   // you can pass a json document
-    //   this.editor.setContent(JSON.parse(localStorage[this.box.id]), true);
-    // }
+    if (localStorage[this.box.id] !== undefined) {
+      // you can pass a json document
+      this.editor.setContent(JSON.parse(localStorage[this.box.id]), true);
+    }
   },
   beforeDestroy() {
     // Always destroy your editor instance when it's no longer needed

@@ -12,108 +12,151 @@
         <p class="text-base">{{allPosterData}}</p>
       </div>
     </modal>
-    <modal name="onLoad">hello, world!</modal>
+    <modal name="onPublish">Publish coming soon!</modal>
     <div class="w-full flex justify-between items-center">
       <h1>Digital Posters</h1>
       <div>
         <button
+          v-if="!preview"
           @click="onSave()"
           class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded"
         >Save</button>
         <button
-          @click="onLoad"
-          class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded"
+          v-if="!preview"
+          @click="onLoad()"
+          class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 mr-4 rounded"
         >Load</button>
         <button
-          @click="onPreview"
-          class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
-        >Preview</button>
+          v-if="preview"
+          @click="onPublish()"
+          class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded"
+        >Publish</button>
+        <button
+          @click="onPreview()"
+          class="text-white font-bold py-2 px-4 rounded"
+          :class="preview ? 'bg-orange-600 hover:bg-orange-500' : 'bg-orange-500 hover:bg-orange-600'"
+        >Turn Preview {{ preview ? "Off" : "On"}}</button>
       </div>
     </div>
-    <div id="header" class="flex mb-4">
+    <div id="header" class="flex-col mb-4">
       <div class="text-center w-full">
         <draggable
           class="w-full px-4"
           ghost-class="moving-card"
           filter=".action-button"
+          :disabled="preview"
           :list="header"
           :animation="200"
         >
           <info-card
             v-for="(box, index) in header"
             :key="box.id"
-            :box="box"
+            :box="header[index]"
+            :preview="preview"
             @on-delete="onDelete(header, index)"
+            @on-change="onChange($event, header, index)"
           ></info-card>
         </draggable>
       </div>
+      <div class="flex flex-col md:flex-row text-center w-full">
+        <div class="text-center w-full md:w-1/6 px-4">
+          <info-card
+            :key="logo.id"
+            :box="logo[0]"
+            :preview="preview"
+            @on-change="onChange($event, logo)"
+          ></info-card>
+        </div>
+        <div class="text-center w-full md:w-2/3 px-4">
+          <info-card
+            :key="credits.id"
+            :box="credits[0]"
+            :preview="preview"
+            @on-change="onChange($event, credits)"
+          ></info-card>
+        </div>
+        <div class="text-center w-full md:w-1/6 px-4">
+          <info-card :key="qr.id" :box="qr[0]" :preview="preview" @on-change="onChange($event, qr)"></info-card>
+        </div>
+      </div>
     </div>
     <div id="body" class="flex flex-col lg:flex-row mb-4">
-      <div class="text-center w-full">
+      <div class="text-center w-full md:w-1/3">
         <draggable
           class="w-full px-4"
           group="all-users"
           ghost-class="moving-card"
           filter=".action-button"
+          :disabled="preview"
           :list="posterColOne"
           :animation="200"
         >
           <info-card
             v-for="(box, index) in posterColOne"
             :key="box.id"
-            :box.sync="box"
+            :box="posterColOne[index]"
+            :preview="preview"
             @on-delete="onDelete(posterColOne, index)"
+            @on-change="onChange($event, posterColOne, index)"
           ></info-card>
           <div
             @click="onAdd(posterColOne)"
-            class="p-4 mb-3 bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
+            v-if="!preview"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
           >
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
         </draggable>
       </div>
-      <div class="text-center w-full">
+      <div class="text-center w-full md:w-1/3">
         <draggable
           class="w-full px-4"
           group="all-users"
           ghost-class="moving-card"
           filter=".action-button"
+          :disabled="preview"
           :list="posterColTwo"
           :animation="200"
         >
           <info-card
             v-for="(box, index) in posterColTwo"
             :key="box.id"
-            :box="box"
+            :box="posterColTwo[index]"
+            :preview="preview"
             @on-delete="onDelete(posterColTwo, index)"
+            @on-change="onChange($event, posterColTwo, index)"
           ></info-card>
           <div
             @click="onAdd(posterColTwo)"
-            class="p-4 mb-3 bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
+            v-if="!preview"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
           >
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
         </draggable>
       </div>
-      <div class="text-center w-full">
+      <div class="text-center w-full md:w-1/3">
         <draggable
           class="w-full px-4"
           group="all-users"
           ghost-class="moving-card"
           filter=".action-button"
+          :disabled="preview"
           :list="posterColThree"
           :animation="200"
         >
           <info-card
             v-for="(box, index) in posterColThree"
             :key="box.id"
-            :box.sync="posterColThree[index]"
+            :box="posterColThree[index]"
+            :preview="preview"
             @on-delete="onDelete(posterColThree, index)"
             @on-change="onChange($event, posterColThree, index)"
           ></info-card>
           <div
             @click="onAdd(posterColThree)"
-            class="p-4 mb-3 bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
+            v-if="!preview"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
           >
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
@@ -126,14 +169,17 @@
           class="w-full px-4"
           ghost-class="moving-card"
           filter=".action-button"
+          :disabled="preview"
           :list="footer"
           :animation="200"
         >
           <info-card
             v-for="(box, index) in footer"
             :key="box.id"
-            :box="box"
+            :box="footer[index]"
+            :preview="preview"
             @on-delete="onDelete(footer, index)"
+            @on-change="onChange($event, footer, index)"
           ></info-card>
         </draggable>
       </div>
@@ -149,6 +195,10 @@ import { Trash2Icon, PlusCircleIcon } from "vue-feather-icons";
 
 import InfoCard from "./components/InfoCard";
 
+import loadData from "./data/posterJSON.json";
+
+import axios from "axios";
+
 export default {
   name: "app",
   components: {
@@ -159,7 +209,9 @@ export default {
   },
   data() {
     return {
+      preview: false,
       userID: 1,
+      posterID: 1,
       header: [
         {
           id: "yle0mxm4q",
@@ -172,6 +224,33 @@ export default {
                 content: [{ type: "text", text: "Hi there," }]
               }
             ]
+          }
+        }
+      ],
+      logo: [
+        {
+          id: "1234546",
+          body: {
+            type: "doc",
+            content: []
+          }
+        }
+      ],
+      credits: [
+        {
+          id: "12asdf46",
+          body: {
+            type: "doc",
+            content: []
+          }
+        }
+      ],
+      qr: [
+        {
+          id: "kj23jk4",
+          body: {
+            type: "doc",
+            content: []
           }
         }
       ],
@@ -268,13 +347,49 @@ export default {
     onChange(box, list, index) {
       list[index] = box;
     },
+    onChange(box, item) {
+      item = box;
+    },
     onAdd(list) {
       list.push({ id: this.generateId() });
     },
     onSave() {
-      this.$modal.show("onSave");
+      const data = this.getAllPosterData();
+      // localStorage["posterSave"] = JSON.stringify(data);
+
+      axios
+        .post("http://localhost:3000/savePoster", data)
+        .then(function(response) {
+          console.log(response);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
+      // this.$modal.show("onSave");
     },
     onLoad() {
+      // console.log(loadData);
+      // const posterContent = loadData.poster.content;
+      const that = this;
+      axios
+        .post("http://localhost:3000/loadPoster", { userID: this.userID })
+        .then(function(response) {
+          const posterData = response.data;
+          console.log(posterData);
+          posterData.forEach(section => {
+            const name = section.name;
+
+            section.content.forEach((content, index) => {
+              that.$set(that.$data[name], index, content);
+            });
+          });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    onPublish() {
       this.$set(this.posterColThree, 0, {
         id: "pyng271w9",
         body: {
@@ -302,55 +417,208 @@ export default {
       //     ]
       //   }
       // };
-      // this.$modal.show("onLoad");
+      // this.$modal.show("onPublish");
     },
     generateId() {
       return Math.random()
         .toString(36)
         .substr(2, 9);
-    }
-  },
-  computed: {
-    allPosterData() {
+    },
+    onPreview() {
+      this.preview = !this.preview;
+    },
+    getAllPosterData() {
       const headerData = [
         {
           name: "header",
-          content: this.header.map(box => box)
+          content: this.header.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
+        }
+      ];
+      const logoData = [
+        {
+          name: "logo",
+          content: this.logo.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
+        }
+      ];
+      const creditsData = [
+        {
+          name: "credits",
+          content: this.credits.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
+        }
+      ];
+      const qrData = [
+        {
+          name: "qr",
+          content: this.qr.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
       const posterColOneData = [
         {
           name: "posterColOne",
-          content: this.posterColOne.map(box => box)
+          content: this.posterColOne.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
       const posterColTwoData = [
         {
           name: "posterColTwo",
-          content: this.posterColTwo.map(box => box)
+          content: this.posterColTwo.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
       const posterColThreeData = [
         {
           name: "posterColThree",
-          content: this.posterColThree.map(box => box)
+          content: this.posterColThree.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
       const footerData = [
         {
           name: "footer",
-          content: this.footer.map(box => box)
+          content: this.footer.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
 
       const allPosterData = headerData.concat(
+        logoData,
+        creditsData,
+        qrData,
         posterColOneData,
         posterColTwoData,
         posterColThreeData,
         footerData
       );
 
-      return allPosterData;
+      return {
+        userID: this.userID,
+        poster: {
+          id: this.posterID,
+          content: allPosterData
+        }
+      };
+    }
+  },
+  computed: {
+    allPosterData() {
+      return this.getAllPosterData();
     }
   }
 };

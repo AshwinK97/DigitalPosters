@@ -1,0 +1,187 @@
+{
+  "userID": 1,
+  "poster": {
+    "id": 1,
+    "content": [
+      {
+        "name": "header",
+        "content": [
+          {
+            "id": "yle0mxm4q",
+            "body": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "heading",
+                  "attrs": {
+                    "level": 2
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Hi there,"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "logo",
+        "content": [
+          {
+            "id": "1234546",
+            "body": {
+              "type": "doc",
+              "content": []
+            }
+          }
+        ]
+      },
+      {
+        "name": "credits",
+        "content": [
+          {
+            "id": "12asdf46",
+            "body": {
+              "type": "doc",
+              "content": []
+            }
+          }
+        ]
+      },
+      {
+        "name": "qr",
+        "content": [
+          {
+            "id": "kj23jk4",
+            "body": {
+              "type": "doc",
+              "content": []
+            }
+          }
+        ]
+      },
+      {
+        "name": "posterColOne",
+        "content": [
+          {
+            "id": "kn0x8hwy0",
+            "body": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "heading",
+                  "attrs": {
+                    "level": 2
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Internal Module - Save File Test"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "image",
+                      "attrs": {
+                        "src": "https://lh4.googleusercontent.com/WVlNA4CsnjPH31Z2Bh0H1emJtnRfgVNTeDoDzeXojlfdzaCPo2SyjADHTL4EnafyduF4VEdwLyt9_ahECsyeTnUYKx_ReFGYyccM7DfsStAtx04gjYD2j6XNKHXEWPPxtAetoetd",
+                        "alt": null,
+                        "title": null
+                      },
+                      "marks": [
+                        {
+                          "type": "italic"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "posterColTwo",
+        "content": [
+          {
+            "id": "t1swg2t3l",
+            "body": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "heading",
+                  "attrs": {
+                    "level": 2
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Hi there,"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "posterColThree",
+        "content": [
+          {
+            "id": "pyng271w9",
+            "body": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "heading",
+                  "attrs": {
+                    "level": 2
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Hi there,"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "footer",
+        "content": [
+          {
+            "id": "ocfmvpdbw",
+            "body": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "heading",
+                  "attrs": {
+                    "level": 2
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Hi there,"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
