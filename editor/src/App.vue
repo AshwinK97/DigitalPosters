@@ -197,6 +197,8 @@ import InfoCard from "./components/InfoCard";
 
 import loadData from "./data/posterJSON.json";
 
+import axios from "axios";
+
 export default {
   name: "app",
   components: {
@@ -352,21 +354,40 @@ export default {
       list.push({ id: this.generateId() });
     },
     onSave() {
-      localStorage['posterSave'] = JSON.stringify(this.allPosterData);
+      // const data = this.allPosterData;
+      localStorage["posterSave"] = JSON.stringify(this.allPosterData);
+
+      axios
+        .post("http://localhost:3000/savePoster", this.allPosterData)
+        .then(function(response) {
+          console.log(response);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
 
       this.$modal.show("onSave");
     },
     onLoad() {
       // console.log(loadData);
-      const posterContent = loadData.poster.content;
+      // const posterContent = loadData.poster.content;
+      const that = this;
+      axios
+        .post("http://localhost:3000/loadPoster", {userID: this.userID})
+        .then(function(response) {
+          const posterData = response.data;
+          console.log(posterData);
+          posterData.forEach(section => {
+            const name = section.name;
 
-      posterContent.forEach(section => {
-        const name = section.name;
-
-        section.content.forEach((content, index) => {
-          this.$set(this.$data[name], index, content);
+            section.content.forEach((content, index) => {
+              that.$set(that.$data[name], index, content);
+            });
+          });
+        })
+        .catch(function(error) {
+          console.log(error);
         });
-      });
     },
     onPublish() {
       this.$set(this.posterColThree, 0, {
@@ -412,25 +433,85 @@ export default {
       const headerData = [
         {
           name: "header",
-          content: this.header.map(box => box)
+          content: this.header.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
       const logoData = [
         {
           name: "logo",
-          content: this.logo.map(box => box)
+          content: this.logo.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
       const creditsData = [
         {
           name: "credits",
-          content: this.credits.map(box => box)
+          content: this.credits.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
       const qrData = [
         {
           name: "qr",
-          content: this.qr.map(box => box)
+          content: this.qr.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
       const posterColOneData = [
@@ -457,19 +538,64 @@ export default {
       const posterColTwoData = [
         {
           name: "posterColTwo",
-          content: this.posterColTwo.map(box => box)
+          content: this.posterColTwo.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
       const posterColThreeData = [
         {
           name: "posterColThree",
-          content: this.posterColThree.map(box => box)
+          content: this.posterColThree.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
       const footerData = [
         {
           name: "footer",
-          content: this.footer.map(box => box)
+          content: this.footer.map(box => {
+            if (localStorage[box.id] !== undefined) {
+              return {
+                id: box.id,
+                body: JSON.parse(localStorage[box.id])
+              };
+            } else {
+              return {
+                id: box.id,
+                body: {
+                  type: "doc",
+                  content: []
+                }
+              };
+            }
+          })
         }
       ];
 
