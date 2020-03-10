@@ -55,7 +55,8 @@ app.get("/getImage", (req, res) => {
   });
 });
 
-app.get("/test", (req, res) => {
+app.get("/", (req, res) => {
+  console.log("server is running!");
   res.status(200).send("Server is running!");
 });
 
