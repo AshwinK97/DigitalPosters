@@ -354,11 +354,11 @@ export default {
       list.push({ id: this.generateId() });
     },
     onSave() {
-      // const data = this.allPosterData;
-      localStorage["posterSave"] = JSON.stringify(this.allPosterData);
+      const data = this.getAllPosterData();
+      // localStorage["posterSave"] = JSON.stringify(data);
 
       axios
-        .post("http://localhost:3000/savePoster", this.allPosterData)
+        .post("http://localhost:3000/savePoster", data)
         .then(function(response) {
           console.log(response);
         })
@@ -366,14 +366,14 @@ export default {
           console.log(error);
         });
 
-      this.$modal.show("onSave");
+      // this.$modal.show("onSave");
     },
     onLoad() {
       // console.log(loadData);
       // const posterContent = loadData.poster.content;
       const that = this;
       axios
-        .post("http://localhost:3000/loadPoster", {userID: this.userID})
+        .post("http://localhost:3000/loadPoster", { userID: this.userID })
         .then(function(response) {
           const posterData = response.data;
           console.log(posterData);
@@ -426,10 +426,8 @@ export default {
     },
     onPreview() {
       this.preview = !this.preview;
-    }
-  },
-  computed: {
-    allPosterData() {
+    },
+    getAllPosterData() {
       const headerData = [
         {
           name: "header",
@@ -616,6 +614,11 @@ export default {
           content: allPosterData
         }
       };
+    }
+  },
+  computed: {
+    allPosterData() {
+      return this.getAllPosterData();
     }
   }
 };
