@@ -1,170 +1,82 @@
 <template>
   <div id="static-poster">
-    <modal class="rounded" name="onSave">
-      <div class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3" role="alert">
-        <p class="font-bold">Informational message</p>
-        <p class="text-sm">You are about to save the contents of this poster! Please check the data.</p>
-      </div>
-      <div class="text-green-700 p-8">
-        <p class="text-base">{{ allPosterData }}</p>
-      </div>
-    </modal>
-    <modal name="onPublish">Publish coming soon!</modal>
     <div class="w-full flex justify-between items-center">
       <h1>Digital Posters</h1>
-      <div>
-        <button v-if="!preview" @click="onSave()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded">
-          Save
-        </button>
-        <button v-if="!preview" @click="onLoad()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 mr-4 rounded">
-          Load
-        </button>
-        <button v-if="preview" @click="onPublish()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded">
-          Publish
-        </button>
-        <button
-          @click="onPreview()"
-          class="text-white font-bold py-2 px-4 rounded"
-          :class="preview ? 'bg-orange-600 hover:bg-orange-500' : 'bg-orange-500 hover:bg-orange-600'"
-        >
-          Turn Preview {{ preview ? "Off" : "On" }}
-        </button>
-      </div>
     </div>
     <div id="header" class="flex-col mb-4">
       <div class="text-center w-full">
-        <draggable
-          class="w-full px-4"
-          ghost-class="moving-card"
-          filter=".action-button"
-          :disabled="preview"
-          :list="header"
-          :animation="200"
-        >
+        <div class="w-full px-4">
           <info-card
             v-for="(box, index) in header"
             :key="box.id"
             :box="header[index]"
             :preview="preview"
-            @on-delete="onDelete(header, index)"
-            @on-change="onChange($event, header, index)"
           ></info-card>
-        </draggable>
+        </div>
       </div>
       <div class="flex flex-col md:flex-row text-center w-full">
         <div class="text-center w-full md:w-1/6 px-4">
-          <info-card :key="logo.id" :box="logo[0]" :preview="preview" @on-change="onChange($event, logo)"></info-card>
+          <info-card
+            :key="logo.id"
+            :box="logo[0]"
+            :preview="preview"
+          ></info-card>
         </div>
         <div class="text-center w-full md:w-2/3 px-4">
-          <info-card :key="credits.id" :box="credits[0]" :preview="preview" @on-change="onChange($event, credits)"></info-card>
+          <info-card
+            :key="credits.id"
+            :box="credits[0]"
+            :preview="preview"
+            @on-change="onChange($event, credits)"
+          ></info-card>
         </div>
         <div class="text-center w-full md:w-1/6 px-4">
-          <info-card :key="qr.id" :box="qr[0]" :preview="preview" @on-change="onChange($event, qr)"></info-card>
+          <info-card :key="qr.id" :box="qr[0]" :preview="preview"></info-card>
         </div>
       </div>
     </div>
     <div id="body" class="flex flex-col lg:flex-row mb-4">
       <div class="text-center w-full md:w-1/3">
-        <draggable
-          class="w-full px-4"
-          group="all-users"
-          ghost-class="moving-card"
-          filter=".action-button"
-          :disabled="preview"
-          :list="posterColOne"
-          :animation="200"
-        >
+        <div class="w-full px-4">
           <info-card
             v-for="(box, index) in posterColOne"
             :key="box.id"
             :box="posterColOne[index]"
             :preview="preview"
-            @on-delete="onDelete(posterColOne, index)"
-            @on-change="onChange($event, posterColOne, index)"
           ></info-card>
-          <div
-            @click="onAdd(posterColOne)"
-            v-if="!preview"
-            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
-          >
-            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
-          </div>
-        </draggable>
+        </div>
       </div>
       <div class="text-center w-full md:w-1/3">
-        <draggable
-          class="w-full px-4"
-          group="all-users"
-          ghost-class="moving-card"
-          filter=".action-button"
-          :disabled="preview"
-          :list="posterColTwo"
-          :animation="200"
-        >
+        <div class="w-full px-4">
           <info-card
             v-for="(box, index) in posterColTwo"
             :key="box.id"
             :box="posterColTwo[index]"
             :preview="preview"
-            @on-delete="onDelete(posterColTwo, index)"
-            @on-change="onChange($event, posterColTwo, index)"
           ></info-card>
-          <div
-            @click="onAdd(posterColTwo)"
-            v-if="!preview"
-            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
-          >
-            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
-          </div>
-        </draggable>
+        </div>
       </div>
       <div class="text-center w-full md:w-1/3">
-        <draggable
-          class="w-full px-4"
-          group="all-users"
-          ghost-class="moving-card"
-          filter=".action-button"
-          :disabled="preview"
-          :list="posterColThree"
-          :animation="200"
-        >
+        <div class="w-full px-4">
           <info-card
             v-for="(box, index) in posterColThree"
             :key="box.id"
             :box="posterColThree[index]"
             :preview="preview"
-            @on-delete="onDelete(posterColThree, index)"
-            @on-change="onChange($event, posterColThree, index)"
           ></info-card>
-          <div
-            @click="onAdd(posterColThree)"
-            v-if="!preview"
-            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
-          >
-            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
-          </div>
-        </draggable>
+        </div>
       </div>
     </div>
     <div id="footer" class="flex mb-4">
       <div class="text-center w-full">
-        <draggable
-          class="w-full px-4"
-          ghost-class="moving-card"
-          filter=".action-button"
-          :disabled="preview"
-          :list="footer"
-          :animation="200"
-        >
+        <div class="w-full px-4">
           <info-card
             v-for="(box, index) in footer"
             :key="box.id"
             :box="footer[index]"
             :preview="preview"
-            @on-delete="onDelete(footer, index)"
-            @on-change="onChange($event, footer, index)"
           ></info-card>
-        </draggable>
+        </div>
       </div>
     </div>
   </div>
@@ -193,7 +105,7 @@ export default {
   },
   data() {
     return {
-      preview: false,
+      preview: true,
       userID: 1,
       posterID: 1,
       header: [
