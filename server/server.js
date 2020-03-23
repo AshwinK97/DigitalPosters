@@ -1,10 +1,13 @@
+const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const express = require("express");
 const fileUpload = require("express-fileupload");
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
 
 const config = require("./config");
-const db = require("./helpers/db");
+const mongo = require("./helpers/mongo");
+const sqlite = require("./helpers/sqlite");
 
 const app = express();
 app.use(fileUpload());
@@ -16,12 +19,25 @@ app.use((req, res, next) => {
   next();
 });
 
+app.post("/register", (req, res) => {
+  if (!req.body.email || !req.body.password) return res.status(400).send("No email / password");
+  sqlite
+    .addUser(req.body.email, req.body.password)
+    .then(isSuccess => {
+      sqlite
+        .getUser(req.body.email)
+        .then(user => {
+          let token = jwt.sign({ id: user.id }, config.secret, { expiresIn: 86400 });
+          res.status(200).send({ auth: true, token: token, user: user });
+        })
+        .catch(err => console.error(err));
+    })
+    .catch(err => console.error(err));
+});
+
 app.post("/savePoster", (req, res) => {
-  // const posterData = req.body
-  // console.log(posterData);
-  // let posterData = fs.readFileSync("./posterJSON.json");
-  // const posterInfo = JSON.parse(posterData);
-  db.savePoster(req.body)
+  mongo
+    .savePoster(req.body)
     .then(() => {
       res.send("Save success!");
     })
@@ -30,7 +46,8 @@ app.post("/savePoster", (req, res) => {
 
 app.post("/loadPoster", (req, res) => {
   console.log(req.body.userID);
-  db.loadPoster(req.body.userID)
+  mongo
+    .loadPoster(req.body.userID)
     .then(data => {
       res.send(data[0].posterContent);
     })
