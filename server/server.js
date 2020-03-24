@@ -22,18 +22,20 @@ app.post("/savePoster", (req, res) => {
   // let posterData = fs.readFileSync("./posterJSON.json");
   // const posterInfo = JSON.parse(posterData);
   db.savePoster(req.body)
-    .then(() => {
-      res.send("Save success!");
-    })
+    .then(() => res.send("Save success!"))
+    .catch(err => res.send(err));
+});
+
+app.post("/publishPoster", (req, res) => {
+  db.publishPoster(req.body)
+    .then(() => res.send("Poster published!"))
     .catch(err => res.send(err));
 });
 
 app.post("/loadPoster", (req, res) => {
   console.log(req.body.userID);
   db.loadPoster(req.body.userID)
-    .then(data => {
-      res.send(data[0].posterContent);
-    })
+    .then(data => res.send(data[0].posterContent))
     .catch(err => res.send(err));
 });
 
