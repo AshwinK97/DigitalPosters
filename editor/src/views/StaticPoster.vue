@@ -234,13 +234,23 @@ export default {
   },
   methods: {
     loadPoster(posterData) {
-      posterData.forEach(section => {
-        const name = section.name;
+      const that = this;
+      axios
+        .post(config.serverUrl + "/loadPoster", { userID: this.userID })
+        .then(function(response) {
+          const posterData = response.data;
+          console.log(posterData);
+          posterData.forEach(section => {
+            const name = section.name;
 
-        section.content.forEach((content, index) => {
-          this.$set(this.$data[name], index, content);
+            section.content.forEach((content, index) => {
+              this.$set(this.$data[name], index, content);
+            });
+          });
+        })
+        .catch(function(error) {
+          console.log(error);
         });
-      });
     }
   },
   mounted() {

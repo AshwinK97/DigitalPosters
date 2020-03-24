@@ -1,7 +1,10 @@
 <template>
   <div id="editor">
     <modal class="rounded" name="onSave">
-      <div class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3" role="alert">
+      <div
+        class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3"
+        role="alert"
+      >
         <p class="font-bold">Informational message</p>
         <p class="text-sm">You are about to save the contents of this poster! Please check the data.</p>
       </div>
@@ -9,26 +12,36 @@
         <p class="text-base">{{ allPosterData }}</p>
       </div>
     </modal>
-    <modal name="onPublish">Publish coming soon!</modal>
+    <modal name="onPublish">
+      <div class="flex flex-col justify-center content-center">
+        <div
+          class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3"
+          role="alert"
+        >Are you sure you want to Publish?</div>
+        <button
+          class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded"
+          @click="onPublishConfirm()"
+        >Confirm</button>
+      </div>
+    </modal>
     <div class="w-full flex justify-between items-center">
       <h1>Digital Posters</h1>
       <div>
-        <button v-if="!preview" @click="onSave()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded">
-          Save
-        </button>
-        <button v-if="!preview" @click="onLoad()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 mr-4 rounded">
-          Load
-        </button>
-        <button v-if="preview" @click="onPublish()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded">
-          Publish
-        </button>
+        <button
+          v-if="!preview"
+          @click="onSave()"
+          class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded"
+        >Save</button>
+        <button
+          v-if="preview"
+          @click="onPublish()"
+          class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded"
+        >Publish</button>
         <button
           @click="onPreview()"
           class="text-white font-bold py-2 px-4 rounded"
           :class="preview ? 'bg-orange-600 hover:bg-orange-500' : 'bg-orange-500 hover:bg-orange-600'"
-        >
-          Turn Preview {{ preview ? "Off" : "On" }}
-        </button>
+        >Turn Preview {{ preview ? "Off" : "On" }}</button>
       </div>
     </div>
     <div id="header" class="flex-col mb-4">
@@ -53,10 +66,20 @@
       </div>
       <div class="flex flex-col md:flex-row text-center w-full">
         <div class="text-center w-full md:w-1/6 px-4">
-          <info-card :key="logo.id" :box="logo[0]" :preview="preview" @on-change="onChange($event, logo)"></info-card>
+          <info-card
+            :key="logo.id"
+            :box="logo[0]"
+            :preview="preview"
+            @on-change="onChange($event, logo)"
+          ></info-card>
         </div>
         <div class="text-center w-full md:w-2/3 px-4">
-          <info-card :key="credits.id" :box="credits[0]" :preview="preview" @on-change="onChange($event, credits)"></info-card>
+          <info-card
+            :key="credits.id"
+            :box="credits[0]"
+            :preview="preview"
+            @on-change="onChange($event, credits)"
+          ></info-card>
         </div>
         <div class="text-center w-full md:w-1/6 px-4">
           <info-card :key="qr.id" :box="qr[0]" :preview="preview" @on-change="onChange($event, qr)"></info-card>
@@ -374,34 +397,19 @@ export default {
         });
     },
     onPublish() {
-      this.$set(this.posterColThree, 0, {
-        id: "pyng271w9",
-        body: {
-          type: "doc",
-          content: [
-            {
-              type: "heading",
-              attrs: { level: 2 },
-              content: [{ type: "text", text: "Hi!" }]
-            }
-          ]
-        }
-      });
-
-      // this.posterColThree[0] = {
-      //   id: "pyng271w9",
-      //   body: {
-      //     type: "doc",
-      //     content: [
-      //       {
-      //         type: "heading",
-      //         attrs: { level: 2 },
-      //         content: [{ type: "text", text: "Hi!" }]
-      //       }
-      //     ]
-      //   }
-      // };
-      // this.$modal.show("onPublish");
+      this.onSave();
+      this.$modal.show("onPublish");
+    },
+    onPublishConfirm() {
+      const that = this;
+      axios
+        .post(config.serverUrl + "/publishPoster", { userID: this.userID })
+        .then(function(response) {
+          console.log(response);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     generateId() {
       return Math.random()
