@@ -1,6 +1,6 @@
 <template>
   <div class="p-4 mb-3 bg-white justify-between items-center shadow rounded-lg">
-    <Trash2Icon 
+    <Trash2Icon
       v-if="!preview"
       @click="$emit('on-delete')"
       size="2x"
@@ -65,7 +65,7 @@
             @click="commands.ordered_list"
           >
             <icon name="ol" />
-          </button> -->
+          </button>-->
 
           <button class="menubar__button" @click="commands.undo">
             <arrow-left-icon />
@@ -129,7 +129,7 @@ export default {
     },
     preview: {
       type: Boolean,
-      default: () => (false)
+      default: () => false
     }
   },
   data() {
@@ -188,6 +188,11 @@ export default {
     box() {
       this.json = this.box.body;
       this.editor.setContent(this.json);
+    },
+    preview() {
+      this.editor.setOptions({
+        editable: !this.preview
+      });
     }
   },
   mounted() {
@@ -198,6 +203,10 @@ export default {
       // you can pass a json document
       this.editor.setContent(JSON.parse(localStorage[this.box.id]), true);
     }
+
+    this.editor.setOptions({
+      editable: !this.preview
+    });
   },
   beforeDestroy() {
     // Always destroy your editor instance when it's no longer needed
