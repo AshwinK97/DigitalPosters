@@ -111,23 +111,26 @@ export default {
     };
   },
   methods: {
-    loadPoster() {
+    loadPoster(id) {
       const that = this;
       axios
-        .post(config.serverUrl + "/loadPoster", { userID: this.userID })
+        .post(config.serverUrl + "/loadPoster", { userID: id })
         .then(function(response) {
           const posterData = response.data;
-
+          console.log(response);
           posterData.forEach(section => {
             const name = section.name;
+            let hasContent = false;
             // TODO: QR code data will cause issues, remember to fix here by avoiding QR code data
-            section.content.forEach((content, index) => {
-              that.$set(that.$data[name], index, content);
-            });
+            if (section.content.length > 0) {
+              section.content.forEach((content, index) => {
+                that.$set(that.$data[name], index, content);
+              });
 
-            const hasContent =
-              Object.keys(section.content[0].body.content[0]).length > 1 ||
-              section.content[0].body.content.length > 1;
+              hasContent =
+                Object.keys(section.content[0].body.content[0]).length > 1 ||
+                section.content[0].body.content.length > 1;
+            }
 
             that.$data.visiblity[name] = hasContent;
           });
@@ -138,7 +141,7 @@ export default {
     }
   },
   mounted() {
-    this.loadPoster();
+    this.loadPoster(parseInt(this.$route.params.id));
   }
 };
 </script>

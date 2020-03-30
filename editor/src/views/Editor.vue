@@ -127,9 +127,9 @@
           </div>
         </div>
         <div class="text-center w-full md:w-1/6 px-4">
-          <div
-            class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg"
-          >QR Code Placeholder</div>
+          <div class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg">
+            <qrcode-vue v-if="publishLink !== ''" :value="publishLink" level="H"></qrcode-vue>{{publishLink !== '' ? publishLink : "QR Code Placeholder"}}
+          </div>
         </div>
       </div>
     </div>
@@ -255,6 +255,7 @@ import "../assets/css/tailwind.css";
 
 import Draggable from "vuedraggable";
 import { Trash2Icon, PlusCircleIcon } from "vue-feather-icons";
+import QrcodeVue from "qrcode.vue";
 
 import InfoCard from "../components/InfoCard";
 
@@ -269,11 +270,13 @@ export default {
     PlusCircleIcon,
     Trash2Icon,
     Draggable,
-    InfoCard
+    InfoCard,
+    QrcodeVue
   },
   data() {
     return {
       preview: false,
+      publishLink: "",
       userID: 2,
       posterID: 1,
       snackbar: false,
@@ -281,7 +284,6 @@ export default {
       header: [],
       logo: [],
       credits: [],
-      qr: [],
       posterColOne: [],
       posterColTwo: [],
       posterColThree: [],
@@ -345,18 +347,22 @@ export default {
         .post(config.serverUrl + "/loadPoster", { userID: this.userID })
         .then(function(response) {
           const posterData = response.data;
+          console.log(response);
           console.log(posterData);
           posterData.forEach(section => {
             const name = section.name;
+            let hasContent = false;
+            // TODO: QR code data will cause issues, remember to fix here by avoiding QR code data
+            if (section.content.length > 0) {
+              section.content.forEach((content, index) => {
+                that.$set(that.$data[name], index, content);
+                localStorage[content.id] = JSON.stringify(content.body);
+              });
 
-            section.content.forEach((content, index) => {
-              that.$set(that.$data[name], index, content);
-              localStorage[content.id] = JSON.stringify(content.body);
-            });
-
-            const hasContent =
-              Object.keys(section.content[0].body.content[0]).length > 1 ||
-              section.content[0].body.content.length > 1;
+              const hasContent =
+                Object.keys(section.content[0].body.content[0]).length > 1 ||
+                section.content[0].body.content.length > 1;
+            }
 
             if (hasContent === false) {
               that.onDelete(that.$data[name], 0);
@@ -376,6 +382,8 @@ export default {
       axios
         .post(config.serverUrl + "/publishPoster", { userID: this.userID })
         .then(function(response) {
+          // Send back published link in response for qrcode
+          that.$data.publishLink = "http://192.168.2.233:8080/#/p/2";
           console.log(response);
           that.snackbarMessage = response.data;
           that.snackbar = true;
@@ -502,27 +510,6 @@ export default {
           })
         }
       ];
-      const qrData = [
-        {
-          name: "qr",
-          content: this.qr.map(box => {
-            if (localStorage[box.id] !== undefined) {
-              return {
-                id: box.id,
-                body: JSON.parse(localStorage[box.id])
-              };
-            } else {
-              return {
-                id: box.id,
-                body: {
-                  type: "doc",
-                  content: []
-                }
-              };
-            }
-          })
-        }
-      ];
       const posterColOneData = [
         {
           name: "posterColOne",
@@ -611,7 +598,6 @@ export default {
       const allPosterData = headerData.concat(
         logoData,
         creditsData,
-        qrData,
         posterColOneData,
         posterColTwoData,
         posterColThreeData,
