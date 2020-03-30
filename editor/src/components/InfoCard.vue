@@ -7,7 +7,7 @@
       class="p-1 focus:shadow-outline text-red-500 hover:text-red-600"
     />
     <div class="flex items-center flex-col w-full">
-      <editor-menu-bar v-if="menu && name === ''" :editor="editor" v-slot="{ commands, isActive }">
+      <editor-menu-bar v-if=" name === ''" :editor="editor" v-slot="{ commands, isActive }">
         <div class="menubar">
           <button
             class="menubar__button"
@@ -195,15 +195,15 @@ export default {
         onUpdate: ({ getJSON }) => {
           this.json = getJSON();
         },
-        onBlur: () => {
-          this.menu = false;
-        },
+        // onBlur: () => {
+        //   this.menu = false;
+        // },
         onFocus: () => {
           this.menu = true;
         }
       }),
       json: this.box.body,
-      menu: false
+      menu: true //flip to default false if trying to make onFocus menus
     };
   },
   watch: {
@@ -219,6 +219,11 @@ export default {
       this.editor.setOptions({
         editable: !this.preview
       });
+    }
+  },
+  methods: {
+    setMenuVisible(value) {
+      this.menu = value;
     }
   },
   mounted() {

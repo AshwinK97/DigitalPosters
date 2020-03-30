@@ -106,7 +106,7 @@
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
         </div>
-        <div class="text-center w-full md:w-2/3 px-4" v-if="this.visiblity.credits">
+        <div class="text-center w-full md:w-2/3 px-4">
           <div v-if="credits.length > 0">
             <info-card
               v-for="(box, index) in credits"
@@ -126,9 +126,9 @@
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
         </div>
-        <div class="text-center w-full md:w-1/6 px-4" v-if="this.visiblity.qr">
+        <div class="text-center w-full md:w-1/6 px-4">
           <div
-            class="p-4 mb-3 bg-white justify-between items-center shadow rounded-lg"
+            class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg"
           >QR Code Placeholder</div>
         </div>
       </div>
@@ -274,7 +274,7 @@ export default {
   data() {
     return {
       preview: false,
-      userID: 1,
+      userID: 2,
       posterID: 1,
       snackbar: false,
       snackbarMessage: "",
@@ -299,32 +299,6 @@ export default {
     };
   },
   methods: {
-    // Use to load new data
-    loadPoster(posterData) {
-      const that = this;
-      axios
-        .post(config.serverUrl + "/loadPoster", { userID: this.userID })
-        .then(function(response) {
-          const posterData = response.data;
-
-          posterData.forEach(section => {
-            const name = section.name;
-
-            section.content.forEach((content, index) => {
-              that.$set(that.$data[name], index, content);
-            });
-
-            const hasContent =
-              Object.keys(section.content[0].body.content[0]).length > 1 ||
-              section.content[0].body.content.length > 1;
-
-            that.$data.visiblity[name] = hasContent;
-          });
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
     onDelete(list, index) {
       list.splice(index, 1);
     },
@@ -365,7 +339,7 @@ export default {
           that.$data.snackbar = true;
         });
     },
-    onLoad() {
+    loadPoster() {
       const that = this;
       axios
         .post(config.serverUrl + "/loadPoster", { userID: this.userID })
@@ -377,7 +351,16 @@ export default {
 
             section.content.forEach((content, index) => {
               that.$set(that.$data[name], index, content);
+              localStorage[content.id] = JSON.stringify(content.body);
             });
+
+            const hasContent =
+              Object.keys(section.content[0].body.content[0]).length > 1 ||
+              section.content[0].body.content.length > 1;
+
+            if (hasContent === false) {
+              that.onDelete(that.$data[name], 0);
+            }
           });
         })
         .catch(function(error) {
@@ -444,11 +427,15 @@ export default {
       ];
 
       sections.forEach(section => {
-        const data = JSON.parse(localStorage[this.$data[section][0].id]);
-        const hasContent =
-          Object.keys(data.content[0]).length > 1 || data.content.length > 1;
+        if (this.$data[section].length > 0) {
+          const data = JSON.parse(localStorage[this.$data[section][0].id]);
+          const hasContent =
+            Object.keys(data.content[0]).length > 1 || data.content.length > 1;
 
-        this.$data.visiblity[section] = hasContent;
+          this.$data.visiblity[section] = hasContent;
+        } else {
+          this.$data.visiblity[section] = false;
+        }
       });
     },
     getAllPosterData() {
@@ -644,6 +631,9 @@ export default {
     allPosterData() {
       return this.getAllPosterData();
     }
+  },
+  mounted() {
+    this.loadPoster();
   }
 };
 </script>

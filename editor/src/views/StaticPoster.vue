@@ -111,7 +111,7 @@ export default {
     };
   },
   methods: {
-    loadPoster(posterData) {
+    loadPoster() {
       const that = this;
       axios
         .post(config.serverUrl + "/loadPoster", { userID: this.userID })
@@ -138,7 +138,7 @@ export default {
     }
   },
   mounted() {
-    this.loadPoster(loadData.poster.content);
+    this.loadPoster();
   }
 };
 </script>
