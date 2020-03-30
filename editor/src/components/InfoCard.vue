@@ -7,7 +7,7 @@
       class="p-1 focus:shadow-outline text-red-500 hover:text-red-600"
     />
     <div class="flex items-center flex-col w-full">
-      <editor-menu-bar v-if="menu" :editor="editor" v-slot="{ commands, isActive }">
+      <editor-menu-bar v-if="menu && name === ''" :editor="editor" v-slot="{ commands, isActive }">
         <div class="menubar">
           <button
             class="menubar__button"
@@ -76,6 +76,21 @@
           </button>
         </div>
       </editor-menu-bar>
+      <editor-menu-bar
+        v-if="menu && name === 'logo'"
+        :editor="editor"
+        v-slot="{ commands }"
+      >
+        <div class="menubar">
+          <button class="menubar__button" @click="commands.undo">
+            <rotate-ccw-icon />
+          </button>
+
+          <button class="menubar__button" @click="commands.redo">
+            <rotate-cw-icon />
+          </button>
+        </div>
+      </editor-menu-bar>
       <editor-content :editor="editor" class="w-full px-6 pb-4 text-left text-xl" />
     </div>
   </div>
@@ -130,6 +145,10 @@ export default {
     preview: {
       type: Boolean,
       default: () => false
+    },
+    name: {
+      type: String,
+      default: () => ""
     }
   },
   data() {
@@ -214,6 +233,12 @@ export default {
     this.editor.setOptions({
       editable: !this.preview
     });
+
+    if (name === "logo") {
+      this.editor.setOptions({
+        extensions: [new Image(), new History()]
+      });
+    }
   },
   beforeDestroy() {
     // Always destroy your editor instance when it's no longer needed

@@ -64,35 +64,72 @@
           :list="header"
           :animation="200"
         >
-          <info-card
-            v-for="(box, index) in header"
-            :key="box.id"
-            :box="header[index]"
-            :preview="preview"
-            @on-delete="onDelete(header, index)"
-            @on-change="onChange($event, header, index)"
-          ></info-card>
+          <div v-if="header.length > 0">
+            <info-card
+              v-for="(box, index) in header"
+              :key="box.id"
+              :box="header[index]"
+              :preview="preview"
+              @on-delete="onDelete(header, index)"
+              @on-change="onChange($event, header, index)"
+            ></info-card>
+          </div>
+          <div
+            @click="onAdd(header)"
+            v-if="!preview && header.length === 0"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
+          >
+            <div>Add Header</div>
+            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+          </div>
         </draggable>
       </div>
       <div class="flex flex-col md:flex-row text-center w-full">
         <div class="text-center w-full md:w-1/6 px-4" v-if="this.visiblity.logo">
-          <info-card
-            :key="logo.id"
-            :box="logo[0]"
-            :preview="preview"
-            @on-change="onChange($event, logo)"
-          ></info-card>
+          <div v-if="logo.length > 0">
+            <info-card
+              v-for="(box, index) in logo"
+              name="logo"
+              :key="box.id"
+              :box="box[index]"
+              :preview="preview"
+              @on-delete="onDelete(logo, index)"
+              @on-change="onChange($event, logo)"
+            ></info-card>
+          </div>
+          <div
+            @click="onAdd(logo)"
+            v-if="!preview && logo.length === 0"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
+          >
+            <div>Add Logo</div>
+            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+          </div>
         </div>
         <div class="text-center w-full md:w-2/3 px-4" v-if="this.visiblity.credits">
-          <info-card
-            :key="credits.id"
-            :box="credits[0]"
-            :preview="preview"
-            @on-change="onChange($event, credits)"
-          ></info-card>
+          <div v-if="credits.length > 0">
+            <info-card
+              v-for="(box, index) in credits"
+              :key="box.id"
+              :box="box[id]"
+              :preview="preview"
+              @on-delete="onDelete(credits, index)"
+              @on-change="onChange($event, credits)"
+            ></info-card>
+          </div>
+          <div
+            @click="onAdd(credits)"
+            v-if="!preview && credits.length === 0"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
+          >
+            <div>Add Credits</div>
+            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+          </div>
         </div>
         <div class="text-center w-full md:w-1/6 px-4" v-if="this.visiblity.qr">
-          <info-card :key="qr.id" :box="qr[0]" :preview="preview" @on-change="onChange($event, qr)"></info-card>
+          <div
+            class="p-4 mb-3 bg-white justify-between items-center shadow rounded-lg"
+          >QR Code Placeholder</div>
         </div>
       </div>
     </div>
@@ -189,14 +226,24 @@
           :list="footer"
           :animation="200"
         >
-          <info-card
-            v-for="(box, index) in footer"
-            :key="box.id"
-            :box="footer[index]"
-            :preview="preview"
-            @on-delete="onDelete(footer, index)"
-            @on-change="onChange($event, footer, index)"
-          ></info-card>
+          <div v-if="footer.length > 0">
+            <info-card
+              v-for="(box, index) in footer"
+              :key="box.id"
+              :box="footer[index]"
+              :preview="preview"
+              @on-delete="onDelete(footer, index)"
+              @on-change="onChange($event, footer, index)"
+            ></info-card>
+          </div>
+          <div
+            @click="onAdd(footer)"
+            v-if="!preview && footer.length === 0"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
+          >
+            <div>Add Footer</div>
+            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+          </div>
         </draggable>
       </div>
     </div>
@@ -231,132 +278,14 @@ export default {
       posterID: 1,
       snackbar: false,
       snackbarMessage: "",
-      header: [
-        {
-          id: "yle0mxm4q",
-          body: {
-            type: "doc",
-            content: [
-              {
-                type: "heading",
-                attrs: { level: 2 },
-                content: [{ type: "text", text: "Hi there," }]
-              }
-            ]
-          }
-        }
-      ],
-      logo: [
-        {
-          id: "1234546",
-          body: {
-            type: "doc",
-            content: []
-          }
-        }
-      ],
-      credits: [
-        {
-          id: "12asdf46",
-          body: {
-            type: "doc",
-            content: []
-          }
-        }
-      ],
-      qr: [
-        {
-          id: "kj23jk4",
-          body: {
-            type: "doc",
-            content: []
-          }
-        }
-      ],
-      posterColOne: [
-        {
-          id: "kn0x8hwy0",
-          body: {
-            type: "doc",
-            content: [
-              {
-                type: "heading",
-                attrs: { level: 2 },
-                content: [{ type: "text", text: "Hi there," }]
-              },
-              {
-                type: "paragraph",
-                content: [
-                  { type: "text", text: "this is a very " },
-                  { type: "text", marks: [{ type: "italic" }], text: "basic" },
-                  { type: "text", text: " exampp." }
-                ]
-              },
-              {
-                type: "paragraph",
-                content: [{ type: "text", text: "body { display: none;" }]
-              },
-              {
-                type: "paragraph",
-                content: [{ type: "text", text: " A  list" }]
-              },
-              {
-                type: "paragraph",
-                content: [{ type: "text", text: " With regular items" }]
-              },
-              {
-                type: "paragraph",
-                content: [{ type: "text", text: " It's amazing 👏 – mom" }]
-              }
-            ]
-          }
-        }
-      ],
-      posterColTwo: [
-        {
-          id: "t1swg2t3l",
-          body: {
-            type: "doc",
-            content: [
-              {
-                type: "heading",
-                attrs: { level: 2 },
-                content: [{ type: "text", text: "Hi there," }]
-              }
-            ]
-          }
-        }
-      ],
-      posterColThree: [
-        {
-          id: "pyng271w9",
-          body: {
-            type: "doc",
-            content: [
-              {
-                type: "heading",
-                attrs: { level: 2 },
-                content: [{ type: "text", text: "Hi there," }]
-              }
-            ]
-          }
-        }
-      ],
-      footer: [
-        {
-          id: "ocfmvpdbw",
-          body: {
-            type: "doc",
-            content: [
-              {
-                type: "heading",
-                attrs: { level: 2 },
-                content: [{ type: "text", text: "Hi there," }]
-              }
-            ]
-          }
-        }
-      ],
+      header: [],
+      logo: [],
+      credits: [],
+      qr: [],
+      posterColOne: [],
+      posterColTwo: [],
+      posterColThree: [],
+      footer: [],
       visiblity: {
         header: true,
         logo: true,
@@ -407,7 +336,17 @@ export default {
       item = box;
     },
     onAdd(list) {
-      list.push({ id: this.generateId() });
+      list.push({
+        id: this.generateId(),
+        body: {
+          type: "doc",
+          content: [
+            {
+              type: "paragraph"
+            }
+          ]
+        }
+      });
     },
     onSave() {
       const data = this.getAllPosterData();
@@ -477,7 +416,20 @@ export default {
     onPreview() {
       this.preview = !this.preview;
 
-      if (this.preview) this.updateVisibility();
+      if (this.preview) {
+        this.updateVisibility();
+      } else {
+        this.visiblity = {
+          header: true,
+          logo: true,
+          credits: true,
+          qr: true,
+          posterColOne: true,
+          posterColTwo: true,
+          posterColThree: true,
+          footer: true
+        };
+      }
     },
     updateVisibility() {
       const sections = [
@@ -493,7 +445,8 @@ export default {
 
       sections.forEach(section => {
         const data = JSON.parse(localStorage[this.$data[section][0].id]);
-        const hasContent = Object.keys(data.content[0]).length > 1 || data.content.length > 1;
+        const hasContent =
+          Object.keys(data.content[0]).length > 1 || data.content.length > 1;
 
         this.$data.visiblity[section] = hasContent;
       });

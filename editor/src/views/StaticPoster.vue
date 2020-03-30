@@ -120,7 +120,7 @@ export default {
 
           posterData.forEach(section => {
             const name = section.name;
-
+            // TODO: QR code data will cause issues, remember to fix here by avoiding QR code data
             section.content.forEach((content, index) => {
               that.$set(that.$data[name], index, content);
             });
