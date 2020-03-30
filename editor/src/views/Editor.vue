@@ -1,5 +1,9 @@
 <template>
   <div id="editor">
+    <v-snackbar v-model="snackbar">
+      {{ snackbarMessage }}
+      <v-btn color="pink" text @click="snackbar = false">Close</v-btn>
+    </v-snackbar>
     <modal class="rounded" name="onSave">
       <div
         class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3"
@@ -13,15 +17,21 @@
       </div>
     </modal>
     <modal name="onPublish">
-      <div class="flex flex-col justify-center content-center">
+      <div class="flex flex-col">
         <div
           class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3"
           role="alert"
         >Are you sure you want to Publish?</div>
-        <button
-          class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded"
-          @click="onPublishConfirm()"
-        >Confirm</button>
+        <div class="flex justify-center my-24">
+          <button
+            class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mx-8 rounded w-1/3"
+            @click="closeModal('onPublish')"
+          >Cancel</button>
+          <button
+            class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mx-8 rounded w-1/3"
+            @click="onPublishConfirm()"
+          >Confirm</button>
+        </div>
       </div>
     </modal>
     <div class="w-full flex justify-between items-center">
@@ -45,7 +55,7 @@
       </div>
     </div>
     <div id="header" class="flex-col mb-4">
-      <div class="text-center w-full">
+      <div class="text-center w-full" v-if="this.visiblity.header">
         <draggable
           class="w-full px-4"
           ghost-class="moving-card"
@@ -65,7 +75,7 @@
         </draggable>
       </div>
       <div class="flex flex-col md:flex-row text-center w-full">
-        <div class="text-center w-full md:w-1/6 px-4">
+        <div class="text-center w-full md:w-1/6 px-4" v-if="this.visiblity.logo">
           <info-card
             :key="logo.id"
             :box="logo[0]"
@@ -73,7 +83,7 @@
             @on-change="onChange($event, logo)"
           ></info-card>
         </div>
-        <div class="text-center w-full md:w-2/3 px-4">
+        <div class="text-center w-full md:w-2/3 px-4" v-if="this.visiblity.credits">
           <info-card
             :key="credits.id"
             :box="credits[0]"
@@ -81,13 +91,13 @@
             @on-change="onChange($event, credits)"
           ></info-card>
         </div>
-        <div class="text-center w-full md:w-1/6 px-4">
+        <div class="text-center w-full md:w-1/6 px-4" v-if="this.visiblity.qr">
           <info-card :key="qr.id" :box="qr[0]" :preview="preview" @on-change="onChange($event, qr)"></info-card>
         </div>
       </div>
     </div>
     <div id="body" class="flex flex-col lg:flex-row mb-4">
-      <div class="text-center w-full md:w-1/3">
+      <div class="text-center w-full md:w-1/3" v-if="this.visiblity.posterColOne">
         <draggable
           class="w-full px-4"
           group="all-users"
@@ -114,7 +124,7 @@
           </div>
         </draggable>
       </div>
-      <div class="text-center w-full md:w-1/3">
+      <div class="text-center w-full md:w-1/3" v-if="this.visiblity.posterColTwo">
         <draggable
           class="w-full px-4"
           group="all-users"
@@ -141,7 +151,7 @@
           </div>
         </draggable>
       </div>
-      <div class="text-center w-full md:w-1/3">
+      <div class="text-center w-full md:w-1/3" v-if="this.visiblity.posterColThree">
         <draggable
           class="w-full px-4"
           group="all-users"
@@ -170,7 +180,7 @@
       </div>
     </div>
     <div id="footer" class="flex mb-4">
-      <div class="text-center w-full">
+      <div class="text-center w-full" v-if="this.visiblity.footer">
         <draggable
           class="w-full px-4"
           ghost-class="moving-card"
@@ -219,6 +229,8 @@ export default {
       preview: false,
       userID: 1,
       posterID: 1,
+      snackbar: false,
+      snackbarMessage: "",
       header: [
         {
           id: "yle0mxm4q",
@@ -344,14 +356,51 @@ export default {
             ]
           }
         }
-      ]
+      ],
+      visiblity: {
+        header: true,
+        logo: true,
+        credits: true,
+        qr: true,
+        posterColOne: true,
+        posterColTwo: true,
+        posterColThree: true,
+        footer: true
+      }
     };
   },
   methods: {
+    // Use to load new data
+    loadPoster(posterData) {
+      const that = this;
+      axios
+        .post(config.serverUrl + "/loadPoster", { userID: this.userID })
+        .then(function(response) {
+          const posterData = response.data;
+
+          posterData.forEach(section => {
+            const name = section.name;
+
+            section.content.forEach((content, index) => {
+              that.$set(that.$data[name], index, content);
+            });
+
+            const hasContent =
+              Object.keys(section.content[0].body.content[0]).length > 1 ||
+              section.content[0].body.content.length > 1;
+
+            that.$data.visiblity[name] = hasContent;
+          });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
     onDelete(list, index) {
       list.splice(index, 1);
     },
     onChange(box, list, index) {
+      console.log(JSON.stringify(box));
       list[index] = box;
     },
     onChange(box, item) {
@@ -363,21 +412,21 @@ export default {
     onSave() {
       const data = this.getAllPosterData();
       // localStorage["posterSave"] = JSON.stringify(data);
-
+      const that = this;
       axios
         .post(config.serverUrl + "/savePoster", data)
         .then(function(response) {
           console.log(response);
+          that.$data.snackbarMessage = response.data;
+          that.$data.snackbar = true;
         })
         .catch(function(error) {
           console.log(error);
+          that.$data.snackbarMessage = response.data;
+          that.$data.snackbar = true;
         });
-
-      // this.$modal.show("onSave");
     },
     onLoad() {
-      // console.log(loadData);
-      // const posterContent = loadData.poster.content;
       const that = this;
       axios
         .post(config.serverUrl + "/loadPoster", { userID: this.userID })
@@ -406,10 +455,19 @@ export default {
         .post(config.serverUrl + "/publishPoster", { userID: this.userID })
         .then(function(response) {
           console.log(response);
+          that.snackbarMessage = response.data;
+          that.snackbar = true;
         })
         .catch(function(error) {
           console.log(error);
+          that.snackbarMessage = error;
+          that.snackbar = true;
         });
+
+      this.closeModal("onPublish");
+    },
+    closeModal(modalName) {
+      this.$modal.hide(modalName);
     },
     generateId() {
       return Math.random()
@@ -418,6 +476,27 @@ export default {
     },
     onPreview() {
       this.preview = !this.preview;
+
+      if (this.preview) this.updateVisibility();
+    },
+    updateVisibility() {
+      const sections = [
+        "header",
+        "logo",
+        "credits",
+        "qr",
+        "posterColOne",
+        "posterColTwo",
+        "posterColThree",
+        "footer"
+      ];
+
+      sections.forEach(section => {
+        const data = JSON.parse(localStorage[this.$data[section][0].id]);
+        const hasContent = Object.keys(data.content[0]).length > 1 || data.content.length > 1;
+
+        this.$data.visiblity[section] = hasContent;
+      });
     },
     getAllPosterData() {
       const headerData = [

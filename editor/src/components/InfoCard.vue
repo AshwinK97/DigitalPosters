@@ -7,7 +7,7 @@
       class="p-1 focus:shadow-outline text-red-500 hover:text-red-600"
     />
     <div class="flex items-center flex-col w-full">
-      <editor-menu-bar v-if="!preview" :editor="editor" v-slot="{ commands, isActive }">
+      <editor-menu-bar v-if="menu" :editor="editor" v-slot="{ commands, isActive }">
         <div class="menubar">
           <button
             class="menubar__button"
@@ -68,11 +68,11 @@
           </button>-->
 
           <button class="menubar__button" @click="commands.undo">
-            <arrow-left-icon />
+            <rotate-ccw-icon />
           </button>
 
           <button class="menubar__button" @click="commands.redo">
-            <arrow-right-icon />
+            <rotate-cw-icon />
           </button>
         </div>
       </editor-menu-bar>
@@ -102,8 +102,8 @@ import {
   ItalicIcon,
   UnderlineIcon,
   Link2Icon,
-  ArrowLeftIcon,
-  ArrowRightIcon,
+  RotateCcwIcon,
+  RotateCwIcon,
   Trash2Icon,
   ListIcon
 } from "vue-feather-icons";
@@ -117,8 +117,8 @@ export default {
     ItalicIcon,
     UnderlineIcon,
     Link2Icon,
-    ArrowLeftIcon,
-    ArrowRightIcon,
+    RotateCcwIcon,
+    RotateCwIcon,
     Trash2Icon,
     ListIcon
   },
@@ -175,14 +175,21 @@ export default {
         ],
         onUpdate: ({ getJSON }) => {
           this.json = getJSON();
+        },
+        onBlur: () => {
+          this.menu = false;
+        },
+        onFocus: () => {
+          this.menu = true;
         }
       }),
-      json: this.box.body
+      json: this.box.body,
+      menu: false
     };
   },
   watch: {
     json(content) {
-      // this.$emit("update:box", { id: this.box.id, body: content });
+      this.$emit("on-change", { id: this.box.id, body: content });
       localStorage[this.box.id] = JSON.stringify(content);
     },
     box() {
