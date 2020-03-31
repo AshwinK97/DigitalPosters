@@ -119,7 +119,7 @@ export default {
     loadPoster(id) {
       const that = this;
       axios
-        .post(config.localServerUrl + "/loadPoster", { userID: id })
+        .post(config.localServerUrl + "/loadPublishedPoster", { publishID: id })
         .then(function(response) {
           const posterData = response.data.poster;
           that.$data.publishLink = response.data.qrCode;
@@ -147,7 +147,7 @@ export default {
     }
   },
   mounted() {
-    this.loadPoster(parseInt(this.$route.params.id));
+    this.loadPoster(this.$route.params.id);
   }
 };
 </script>

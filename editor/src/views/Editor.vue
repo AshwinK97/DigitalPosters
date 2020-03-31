@@ -129,7 +129,9 @@
         <div class="text-center w-full md:w-1/6 px-4">
           <div class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg">
             <qrcode-vue v-if="publishLink !== ''" :value="publishLink" level="H"></qrcode-vue>
-            <span v-if="publishLink !== ''"><a :href="publishLink">{{publishLink}}</a></span>
+            <span v-if="publishLink !== ''">
+              <a :href="publishLink">{{publishLink}}</a>
+            </span>
             <span v-else>QR Code Placeholder</span>
           </div>
         </div>
@@ -349,29 +351,41 @@ export default {
     loadPoster() {
       const that = this;
       axios
-        .post(config.localServerUrl + "/loadPoster", { userID: this.userID })
+        .post(config.localServerUrl + "/loadPoster", {
+          userID: this.userID,
+          posterID: this.posterID
+        })
         .then(function(response) {
-          const posterData = response.data.poster;
-          that.$data.publishLink = response.data.qrCode;
-          console.log(response);
-          console.log(posterData);
-          posterData.forEach(section => {
-            const name = section.name;
-            let hasContent = false;
-            // TODO: QR code data will cause issues, remember to fix here by avoiding QR code data
-            if (section.content !== undefined) {
-              section.content.forEach((content, index) => {
-                that.$set(that.$data[name], index, content);
-                localStorage[content.id] = JSON.stringify(content.body);
-              });
+          if (response.data.poster != undefined) {
+            const posterData = response.data.poster;
 
-              hasContent = true;
+            if (
+              response.data.qrCode !== null ||
+              response.data.qrCode !== undefined
+            ) {
+              that.$data.publishLink = response.data.qrCode;
             }
 
-            if (hasContent === false) {
-              that.onDelete(that.$data[name], 0);
-            }
-          });
+            console.log(response);
+            console.log(posterData);
+            posterData.forEach(section => {
+              const name = section.name;
+              let hasContent = false;
+              // TODO: QR code data will cause issues, remember to fix here by avoiding QR code data
+              if (section.content !== undefined) {
+                section.content.forEach((content, index) => {
+                  that.$set(that.$data[name], index, content);
+                  localStorage[content.id] = JSON.stringify(content.body);
+                });
+
+                hasContent = true;
+              }
+
+              if (hasContent === false) {
+                that.onDelete(that.$data[name], 0);
+              }
+            });
+          }
         })
         .catch(function(error) {
           console.log(error);
@@ -382,11 +396,13 @@ export default {
     },
     onPublishConfirm() {
       const that = this;
+      const publishID = this.generateId();
+      const data = this.getAllPosterData();
       axios
-        .post(config.localServerUrl + "/publishPoster", { userID: this.userID })
+        .post(config.localServerUrl + "/publishPoster", { poster: data.poster, publishID: publishID })
         .then(function(response) {
           // Send back published link in response for qrcode
-          that.$data.publishLink = "http://192.168.2.233:8080/#/p/2";
+          that.$data.publishLink = "http://192.168.2.233:8080/#/p/" + publishID;
 
           that.onSave();
 
@@ -623,6 +639,9 @@ export default {
     }
   },
   mounted() {
+    this.userID = parseInt(this.$route.params.userID);
+    this.posterID = parseInt(this.$route.params.posterID);
+
     this.loadPoster();
   }
 };

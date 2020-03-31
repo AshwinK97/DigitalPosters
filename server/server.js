@@ -21,8 +21,8 @@ app.post("/savePoster", (req, res) => {
   // console.log(posterData);
   // let posterData = fs.readFileSync("./posterJSON.json");
   // const posterInfo = JSON.parse(posterData);
-  console.log(req.body.publishLink);
-  
+  // console.log(req.body.publishLink);
+  console.log("User: " + req.body.userID + " Poster: " + req.body.poster.id);
   db.savePoster(req.body)
     .then(() => res.send("Save success!"))
     .catch(err => res.send(err));
@@ -35,9 +35,16 @@ app.post("/publishPoster", (req, res) => {
 });
 
 app.post("/loadPoster", (req, res) => {
-  console.log(req.body.userID);
-  db.loadPoster(req.body.userID)
+  console.log("User: " + req.body.userID + " Poster: " + req.body.posterID);
+  db.loadPoster(req.body)
     .then(data => res.send({poster: data[0].posterContent, qrCode: data[0].publishLink}))
+    .catch(err => res.send(err));
+});
+
+app.post("/loadPublishedPoster", (req, res) => {
+  console.log("Poster: " + req.body.publishID);
+  db.loadPublishedPoster(req.body)
+    .then(data => res.send({poster: data[0].posterContent, qrCode: req.body.publishID}))
     .catch(err => res.send(err));
 });
 

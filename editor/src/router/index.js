@@ -7,7 +7,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '/u/:userID/p/:posterID',
     name: 'Editor',
     component: Editor
   },
