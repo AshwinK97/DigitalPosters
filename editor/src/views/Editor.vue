@@ -1,5 +1,9 @@
 <template>
   <div id="editor">
+    <v-snackbar v-model="snackbar">
+      {{ snackbarMessage }}
+      <v-btn color="pink" text @click="snackbar = false">Close</v-btn>
+    </v-snackbar>
     <modal class="rounded" name="onSave">
       <div
         class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3"
@@ -13,15 +17,21 @@
       </div>
     </modal>
     <modal name="onPublish">
-      <div class="flex flex-col justify-center content-center">
+      <div class="flex flex-col">
         <div
           class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3"
           role="alert"
         >Are you sure you want to Publish?</div>
-        <button
-          class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded"
-          @click="onPublishConfirm()"
-        >Confirm</button>
+        <div class="flex justify-center my-24">
+          <button
+            class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mx-8 rounded w-1/3"
+            @click="closeModal('onPublish')"
+          >Cancel</button>
+          <button
+            class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mx-8 rounded w-1/3"
+            @click="onPublishConfirm()"
+          >Confirm</button>
+        </div>
       </div>
     </modal>
     <div class="w-full flex justify-between items-center">
@@ -45,7 +55,7 @@
       </div>
     </div>
     <div id="header" class="flex-col mb-4">
-      <div class="text-center w-full">
+      <div class="text-center w-full" v-if="this.visiblity.header">
         <draggable
           class="w-full px-4"
           ghost-class="moving-card"
@@ -54,40 +64,79 @@
           :list="header"
           :animation="200"
         >
-          <info-card
-            v-for="(box, index) in header"
-            :key="box.id"
-            :box="header[index]"
-            :preview="preview"
-            @on-delete="onDelete(header, index)"
-            @on-change="onChange($event, header, index)"
-          ></info-card>
+          <div v-if="header.length > 0">
+            <info-card
+              v-for="(box, index) in header"
+              :key="box.id"
+              :box="header[index]"
+              :preview="preview"
+              @on-delete="onDelete(header, index)"
+              @on-change="onChange($event, header, index)"
+            ></info-card>
+          </div>
+          <div
+            @click="onAdd(header)"
+            v-if="!preview && header.length === 0"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
+          >
+            <div>Add Header</div>
+            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+          </div>
         </draggable>
       </div>
       <div class="flex flex-col md:flex-row text-center w-full">
-        <div class="text-center w-full md:w-1/6 px-4">
-          <info-card
-            :key="logo.id"
-            :box="logo[0]"
-            :preview="preview"
-            @on-change="onChange($event, logo)"
-          ></info-card>
+        <div class="text-center w-full md:w-1/6 px-4" v-if="this.visiblity.logo">
+          <div v-if="logo.length > 0">
+            <info-card
+              v-for="(box, index) in logo"
+              name="logo"
+              :key="box.id"
+              :box="box[index]"
+              :preview="preview"
+              @on-delete="onDelete(logo, index)"
+              @on-change="onChange($event, logo)"
+            ></info-card>
+          </div>
+          <div
+            @click="onAdd(logo)"
+            v-if="!preview && logo.length === 0"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
+          >
+            <div>Add Logo</div>
+            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+          </div>
         </div>
-        <div class="text-center w-full md:w-2/3 px-4">
-          <info-card
-            :key="credits.id"
-            :box="credits[0]"
-            :preview="preview"
-            @on-change="onChange($event, credits)"
-          ></info-card>
+        <div class="text-center w-full md:w-2/3 px-4" v-if="this.visiblity.credits">
+          <div v-if="credits.length > 0">
+            <info-card
+              v-for="(box, index) in credits"
+              :key="box.id"
+              :box="box[id]"
+              :preview="preview"
+              @on-delete="onDelete(credits, index)"
+              @on-change="onChange($event, credits)"
+            ></info-card>
+          </div>
+          <div
+            @click="onAdd(credits)"
+            v-show="!preview && credits.length === 0"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
+          >
+            <div>Add Credits</div>
+            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+          </div>
         </div>
         <div class="text-center w-full md:w-1/6 px-4">
-          <info-card :key="qr.id" :box="qr[0]" :preview="preview" @on-change="onChange($event, qr)"></info-card>
+          <div class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg">
+            <qrcode-vue v-if="publishLink !== ''" :value="publishLink" level="H"></qrcode-vue>
+            <span v-if="publishLink !== ''"><a :href="publishLink">{{publishLink}}</a></span>
+            <span v-else>QR Code Placeholder</span>
+          </div>
         </div>
       </div>
     </div>
     <div id="body" class="flex flex-col lg:flex-row mb-4">
-      <div class="text-center w-full md:w-1/3">
+      <div class="text-center w-full md:w-1/3" v-if="this.visiblity.posterColOne">
         <draggable
           class="w-full px-4"
           group="all-users"
@@ -114,7 +163,7 @@
           </div>
         </draggable>
       </div>
-      <div class="text-center w-full md:w-1/3">
+      <div class="text-center w-full md:w-1/3" v-if="this.visiblity.posterColTwo">
         <draggable
           class="w-full px-4"
           group="all-users"
@@ -141,7 +190,7 @@
           </div>
         </draggable>
       </div>
-      <div class="text-center w-full md:w-1/3">
+      <div class="text-center w-full md:w-1/3" v-if="this.visiblity.posterColThree">
         <draggable
           class="w-full px-4"
           group="all-users"
@@ -170,7 +219,7 @@
       </div>
     </div>
     <div id="footer" class="flex mb-4">
-      <div class="text-center w-full">
+      <div class="text-center w-full" v-if="this.visiblity.footer">
         <draggable
           class="w-full px-4"
           ghost-class="moving-card"
@@ -179,14 +228,24 @@
           :list="footer"
           :animation="200"
         >
-          <info-card
-            v-for="(box, index) in footer"
-            :key="box.id"
-            :box="footer[index]"
-            :preview="preview"
-            @on-delete="onDelete(footer, index)"
-            @on-change="onChange($event, footer, index)"
-          ></info-card>
+          <div v-if="footer.length > 0">
+            <info-card
+              v-for="(box, index) in footer"
+              :key="box.id"
+              :box="footer[index]"
+              :preview="preview"
+              @on-delete="onDelete(footer, index)"
+              @on-change="onChange($event, footer, index)"
+            ></info-card>
+          </div>
+          <div
+            @click="onAdd(footer)"
+            v-if="!preview && footer.length === 0"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
+          >
+            <div>Add Footer</div>
+            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+          </div>
         </draggable>
       </div>
     </div>
@@ -198,6 +257,7 @@ import "../assets/css/tailwind.css";
 
 import Draggable from "vuedraggable";
 import { Trash2Icon, PlusCircleIcon } from "vue-feather-icons";
+import QrcodeVue from "qrcode.vue";
 
 import InfoCard from "../components/InfoCard";
 
@@ -212,139 +272,34 @@ export default {
     PlusCircleIcon,
     Trash2Icon,
     Draggable,
-    InfoCard
+    InfoCard,
+    QrcodeVue
   },
   data() {
     return {
       preview: false,
-      userID: 1,
+      publishLink: "",
+      userID: 2,
       posterID: 1,
-      header: [
-        {
-          id: "yle0mxm4q",
-          body: {
-            type: "doc",
-            content: [
-              {
-                type: "heading",
-                attrs: { level: 2 },
-                content: [{ type: "text", text: "Hi there," }]
-              }
-            ]
-          }
-        }
-      ],
-      logo: [
-        {
-          id: "1234546",
-          body: {
-            type: "doc",
-            content: []
-          }
-        }
-      ],
-      credits: [
-        {
-          id: "12asdf46",
-          body: {
-            type: "doc",
-            content: []
-          }
-        }
-      ],
-      qr: [
-        {
-          id: "kj23jk4",
-          body: {
-            type: "doc",
-            content: []
-          }
-        }
-      ],
-      posterColOne: [
-        {
-          id: "kn0x8hwy0",
-          body: {
-            type: "doc",
-            content: [
-              {
-                type: "heading",
-                attrs: { level: 2 },
-                content: [{ type: "text", text: "Hi there," }]
-              },
-              {
-                type: "paragraph",
-                content: [
-                  { type: "text", text: "this is a very " },
-                  { type: "text", marks: [{ type: "italic" }], text: "basic" },
-                  { type: "text", text: " exampp." }
-                ]
-              },
-              {
-                type: "paragraph",
-                content: [{ type: "text", text: "body { display: none;" }]
-              },
-              {
-                type: "paragraph",
-                content: [{ type: "text", text: " A  list" }]
-              },
-              {
-                type: "paragraph",
-                content: [{ type: "text", text: " With regular items" }]
-              },
-              {
-                type: "paragraph",
-                content: [{ type: "text", text: " It's amazing 👏 – mom" }]
-              }
-            ]
-          }
-        }
-      ],
-      posterColTwo: [
-        {
-          id: "t1swg2t3l",
-          body: {
-            type: "doc",
-            content: [
-              {
-                type: "heading",
-                attrs: { level: 2 },
-                content: [{ type: "text", text: "Hi there," }]
-              }
-            ]
-          }
-        }
-      ],
-      posterColThree: [
-        {
-          id: "pyng271w9",
-          body: {
-            type: "doc",
-            content: [
-              {
-                type: "heading",
-                attrs: { level: 2 },
-                content: [{ type: "text", text: "Hi there," }]
-              }
-            ]
-          }
-        }
-      ],
-      footer: [
-        {
-          id: "ocfmvpdbw",
-          body: {
-            type: "doc",
-            content: [
-              {
-                type: "heading",
-                attrs: { level: 2 },
-                content: [{ type: "text", text: "Hi there," }]
-              }
-            ]
-          }
-        }
-      ]
+      snackbar: false,
+      snackbarMessage: "",
+      header: [],
+      logo: [],
+      credits: [],
+      posterColOne: [],
+      posterColTwo: [],
+      posterColThree: [],
+      footer: [],
+      visiblity: {
+        header: true,
+        logo: true,
+        credits: true,
+        qr: true,
+        posterColOne: true,
+        posterColTwo: true,
+        posterColThree: true,
+        footer: true
+      }
     };
   },
   methods: {
@@ -352,44 +307,70 @@ export default {
       list.splice(index, 1);
     },
     onChange(box, list, index) {
+      console.log(JSON.stringify(box));
       list[index] = box;
     },
     onChange(box, item) {
       item = box;
     },
     onAdd(list) {
-      list.push({ id: this.generateId() });
+      list.push({
+        id: this.generateId(),
+        body: {
+          type: "doc",
+          content: [
+            {
+              type: "paragraph"
+            }
+          ]
+        }
+      });
     },
     onSave() {
-      const data = this.getAllPosterData();
+      const data = Object.assign(this.getAllPosterData(), {
+        publishLink: this.publishLink
+      });
+      console.log(data);
       // localStorage["posterSave"] = JSON.stringify(data);
-
+      const that = this;
       axios
-        .post(config.serverUrl + "/savePoster", data)
+        .post(config.localServerUrl + "/savePoster", data)
         .then(function(response) {
           console.log(response);
+          that.$data.snackbarMessage = response.data;
+          that.$data.snackbar = true;
         })
         .catch(function(error) {
           console.log(error);
+          that.$data.snackbarMessage = response.data;
+          that.$data.snackbar = true;
         });
-
-      // this.$modal.show("onSave");
     },
-    onLoad() {
-      // console.log(loadData);
-      // const posterContent = loadData.poster.content;
+    loadPoster() {
       const that = this;
       axios
-        .post(config.serverUrl + "/loadPoster", { userID: this.userID })
+        .post(config.localServerUrl + "/loadPoster", { userID: this.userID })
         .then(function(response) {
-          const posterData = response.data;
+          const posterData = response.data.poster;
+          that.$data.publishLink = response.data.qrCode;
+          console.log(response);
           console.log(posterData);
           posterData.forEach(section => {
             const name = section.name;
+            let hasContent = false;
+            // TODO: QR code data will cause issues, remember to fix here by avoiding QR code data
+            if (section.content !== undefined) {
+              section.content.forEach((content, index) => {
+                that.$set(that.$data[name], index, content);
+                localStorage[content.id] = JSON.stringify(content.body);
+              });
 
-            section.content.forEach((content, index) => {
-              that.$set(that.$data[name], index, content);
-            });
+              hasContent = true;
+            }
+
+            if (hasContent === false) {
+              that.onDelete(that.$data[name], 0);
+            }
           });
         })
         .catch(function(error) {
@@ -397,19 +378,31 @@ export default {
         });
     },
     onPublish() {
-      this.onSave();
       this.$modal.show("onPublish");
     },
     onPublishConfirm() {
       const that = this;
       axios
-        .post(config.serverUrl + "/publishPoster", { userID: this.userID })
+        .post(config.localServerUrl + "/publishPoster", { userID: this.userID })
         .then(function(response) {
-          console.log(response);
+          // Send back published link in response for qrcode
+          that.$data.publishLink = "http://192.168.2.233:8080/#/p/2";
+
+          that.onSave();
+
+          that.snackbarMessage = response.data;
+          that.snackbar = true;
         })
         .catch(function(error) {
           console.log(error);
+          that.snackbarMessage = error;
+          that.snackbar = true;
         });
+
+      this.closeModal("onPublish");
+    },
+    closeModal(modalName) {
+      this.$modal.hide(modalName);
     },
     generateId() {
       return Math.random()
@@ -418,6 +411,44 @@ export default {
     },
     onPreview() {
       this.preview = !this.preview;
+
+      if (this.preview) {
+        this.updateVisibility();
+      } else {
+        this.visiblity = {
+          header: true,
+          logo: true,
+          credits: true,
+          qr: true,
+          posterColOne: true,
+          posterColTwo: true,
+          posterColThree: true,
+          footer: true
+        };
+      }
+    },
+    updateVisibility() {
+      const sections = [
+        "header",
+        "logo",
+        "credits",
+        "posterColOne",
+        "posterColTwo",
+        "posterColThree",
+        "footer"
+      ];
+
+      sections.forEach(section => {
+        if (this.$data[section].length > 0) {
+          const data = JSON.parse(localStorage[this.$data[section][0].id]);
+          const hasContent =
+            Object.keys(data.content[0]).length > 1 || data.content.length > 1;
+
+          this.$data.visiblity[section] = hasContent;
+        } else {
+          this.$data.visiblity[section] = false;
+        }
+      });
     },
     getAllPosterData() {
       const headerData = [
@@ -466,27 +497,6 @@ export default {
         {
           name: "credits",
           content: this.credits.map(box => {
-            if (localStorage[box.id] !== undefined) {
-              return {
-                id: box.id,
-                body: JSON.parse(localStorage[box.id])
-              };
-            } else {
-              return {
-                id: box.id,
-                body: {
-                  type: "doc",
-                  content: []
-                }
-              };
-            }
-          })
-        }
-      ];
-      const qrData = [
-        {
-          name: "qr",
-          content: this.qr.map(box => {
             if (localStorage[box.id] !== undefined) {
               return {
                 id: box.id,
@@ -592,7 +602,6 @@ export default {
       const allPosterData = headerData.concat(
         logoData,
         creditsData,
-        qrData,
         posterColOneData,
         posterColTwoData,
         posterColThreeData,
@@ -612,6 +621,9 @@ export default {
     allPosterData() {
       return this.getAllPosterData();
     }
+  },
+  mounted() {
+    this.loadPoster();
   }
 };
 </script>
