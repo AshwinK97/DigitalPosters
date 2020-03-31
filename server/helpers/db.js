@@ -12,7 +12,7 @@ const savePoster = data => {
           console.error(error);
         }
         if (results.length === 0) {
-          collection.insertOne({ userID: data.userID, posterID: data.poster.id, posterContent: data.poster.content }, (err, results) => {
+          collection.insertOne({ userID: data.userID, posterID: data.poster.id, posterContent: data.poster.content, publishLink: data.publishLink }, (err, results) => {
             if (err) {
               reject(err);
             }
@@ -20,7 +20,7 @@ const savePoster = data => {
             resolve(results);
           });
         } else {
-          collection.updateOne({ userID: data.userID }, { $set: { posterContent: data.poster.content } }, (err, results) => {
+          collection.updateOne({ userID: data.userID }, { $set: { posterContent: data.poster.content, publishLink: data.publishLink } }, (err, results) => {
             if (err) {
               reject(err);
             }

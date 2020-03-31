@@ -7,7 +7,7 @@
       class="p-1 focus:shadow-outline text-red-500 hover:text-red-600"
     />
     <div class="flex items-center flex-col w-full">
-      <editor-menu-bar v-if=" name === ''" :editor="editor" v-slot="{ commands, isActive }">
+      <editor-menu-bar v-if=" name === '' && !preview " :editor="editor" v-slot="{ commands, isActive }">
         <div class="menubar">
           <button
             class="menubar__button"
@@ -77,7 +77,7 @@
         </div>
       </editor-menu-bar>
       <editor-menu-bar
-        v-if="menu && name === 'logo'"
+        v-if="!preview && name === 'logo'"
         :editor="editor"
         v-slot="{ commands }"
       >
@@ -198,9 +198,9 @@ export default {
         // onBlur: () => {
         //   this.menu = false;
         // },
-        onFocus: () => {
-          this.menu = true;
-        }
+        // onFocus: () => {
+        //   this.menu = true;
+        // }
       }),
       json: this.box.body,
       menu: true //flip to default false if trying to make onFocus menus

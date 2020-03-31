@@ -21,7 +21,10 @@
           ></info-card-static>
         </div>
         <div class="text-center w-full md:w-1/6 px-4" v-if="this.visiblity.qr">
-          <info-card-static :key="qr.id" :box="qr[0]"></info-card-static>
+          <div class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg">
+            <qrcode-vue v-if="publishLink !== ''" :value="publishLink" level="H"></qrcode-vue>
+            {{publishLink !== '' ? publishLink : "QR Code Placeholder"}}
+          </div>
         </div>
       </div>
     </div>
@@ -69,6 +72,7 @@ import "../assets/css/tailwind.css";
 
 import Draggable from "vuedraggable";
 import { Trash2Icon, PlusCircleIcon } from "vue-feather-icons";
+import QrcodeVue from "qrcode.vue";
 
 import InfoCardStatic from "../components/InfoCardStatic";
 
@@ -83,7 +87,8 @@ export default {
     PlusCircleIcon,
     Trash2Icon,
     Draggable,
-    InfoCardStatic
+    InfoCardStatic,
+    QrcodeVue
   },
   data() {
     return {
@@ -93,7 +98,6 @@ export default {
       header: [],
       logo: [],
       credits: [],
-      qr: [],
       posterColOne: [],
       posterColTwo: [],
       posterColThree: [],
@@ -107,16 +111,18 @@ export default {
         posterColTwo: true,
         posterColThree: true,
         footer: true
-      }
+      },
+      publishLink: ""
     };
   },
   methods: {
     loadPoster(id) {
       const that = this;
       axios
-        .post(config.serverUrl + "/loadPoster", { userID: id })
+        .post(config.localServerUrl + "/loadPoster", { userID: id })
         .then(function(response) {
-          const posterData = response.data;
+          const posterData = response.data.poster;
+          that.$data.publishLink = response.data.qrCode;
           console.log(response);
           posterData.forEach(section => {
             const name = section.name;

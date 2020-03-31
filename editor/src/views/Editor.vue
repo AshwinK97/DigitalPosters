@@ -106,7 +106,7 @@
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
         </div>
-        <div class="text-center w-full md:w-2/3 px-4">
+        <div class="text-center w-full md:w-2/3 px-4" v-if="this.visiblity.credits">
           <div v-if="credits.length > 0">
             <info-card
               v-for="(box, index) in credits"
@@ -119,7 +119,7 @@
           </div>
           <div
             @click="onAdd(credits)"
-            v-if="!preview && credits.length === 0"
+            v-show="!preview && credits.length === 0"
             class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
           >
             <div>Add Credits</div>
@@ -128,7 +128,9 @@
         </div>
         <div class="text-center w-full md:w-1/6 px-4">
           <div class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg">
-            <qrcode-vue v-if="publishLink !== ''" :value="publishLink" level="H"></qrcode-vue>{{publishLink !== '' ? publishLink : "QR Code Placeholder"}}
+            <qrcode-vue v-if="publishLink !== ''" :value="publishLink" level="H"></qrcode-vue>
+            <span v-if="publishLink !== ''"><a :href="publishLink">{{publishLink}}</a></span>
+            <span v-else>QR Code Placeholder</span>
           </div>
         </div>
       </div>
@@ -325,11 +327,14 @@ export default {
       });
     },
     onSave() {
-      const data = this.getAllPosterData();
+      const data = Object.assign(this.getAllPosterData(), {
+        publishLink: this.publishLink
+      });
+      console.log(data);
       // localStorage["posterSave"] = JSON.stringify(data);
       const that = this;
       axios
-        .post(config.serverUrl + "/savePoster", data)
+        .post(config.localServerUrl + "/savePoster", data)
         .then(function(response) {
           console.log(response);
           that.$data.snackbarMessage = response.data;
@@ -344,24 +349,23 @@ export default {
     loadPoster() {
       const that = this;
       axios
-        .post(config.serverUrl + "/loadPoster", { userID: this.userID })
+        .post(config.localServerUrl + "/loadPoster", { userID: this.userID })
         .then(function(response) {
-          const posterData = response.data;
+          const posterData = response.data.poster;
+          that.$data.publishLink = response.data.qrCode;
           console.log(response);
           console.log(posterData);
           posterData.forEach(section => {
             const name = section.name;
             let hasContent = false;
             // TODO: QR code data will cause issues, remember to fix here by avoiding QR code data
-            if (section.content.length > 0) {
+            if (section.content !== undefined) {
               section.content.forEach((content, index) => {
                 that.$set(that.$data[name], index, content);
                 localStorage[content.id] = JSON.stringify(content.body);
               });
 
-              const hasContent =
-                Object.keys(section.content[0].body.content[0]).length > 1 ||
-                section.content[0].body.content.length > 1;
+              hasContent = true;
             }
 
             if (hasContent === false) {
@@ -374,17 +378,18 @@ export default {
         });
     },
     onPublish() {
-      this.onSave();
       this.$modal.show("onPublish");
     },
     onPublishConfirm() {
       const that = this;
       axios
-        .post(config.serverUrl + "/publishPoster", { userID: this.userID })
+        .post(config.localServerUrl + "/publishPoster", { userID: this.userID })
         .then(function(response) {
           // Send back published link in response for qrcode
           that.$data.publishLink = "http://192.168.2.233:8080/#/p/2";
-          console.log(response);
+
+          that.onSave();
+
           that.snackbarMessage = response.data;
           that.snackbar = true;
         })
@@ -427,7 +432,6 @@ export default {
         "header",
         "logo",
         "credits",
-        "qr",
         "posterColOne",
         "posterColTwo",
         "posterColThree",

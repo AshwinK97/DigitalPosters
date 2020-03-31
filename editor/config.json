@@ -1,3 +1,4 @@
 {
-  "serverUrl": "http://server.poster-cloud.studio"
+  "serverUrl": "http://server.poster-cloud.studio",
+  "localServerUrl": "http://localhost:3000"
 }
