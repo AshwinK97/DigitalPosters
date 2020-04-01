@@ -483,7 +483,6 @@ export default {
     this.posterID = this.$route.params.posterID;
 
     this.loadPoster();
-    this.onSave();
   },
   computed: {
     publishLink() {
