@@ -166,7 +166,7 @@ export default {
     }
   },
   mounted() {
-    this.userID = parseInt(this.$route.params.id);
+    this.userID = this.$route.params.id;
     this.loadPostersByUserID(this.userID);
   }
 };

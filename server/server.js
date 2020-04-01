@@ -17,6 +17,19 @@ app.use((req, res, next) => {
   next();
 });
 
+app.post("/signup", (req, res) => {
+  console.log("User: " + req.body.username + " Password: " + req.body.password);
+  db.signup(req.body)
+    .then((data) => res.send(data))
+    .catch(err => res.status(401).send(err));
+});
+
+app.post("/login", (req, res) => {
+  console.log("User: " + req.body.username + " Password: " + req.body.password);
+  db.login(req.body)
+    .then((data) => res.send(data))
+    .catch(err => res.status(401).send(err));
+});
 
 app.post("/savePoster", (req, res) => {
   console.log("User: " + req.body.userID + " Poster: " + req.body.poster.id);

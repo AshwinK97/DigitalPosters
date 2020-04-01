@@ -479,7 +479,7 @@ export default {
     }
   },
   mounted() {
-    this.userID = parseInt(this.$route.params.userID);
+    this.userID = this.$route.params.userID;
     this.posterID = this.$route.params.posterID;
 
     this.loadPoster();
