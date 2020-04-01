@@ -21,10 +21,12 @@
           ></info-card-static>
         </div>
         <div class="text-center w-full md:w-1/6 px-4" v-if="this.visiblity.qr">
-          <div class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg">
-            <qrcode-vue v-if="publishLink !== ''" :value="publishLink" level="H"></qrcode-vue>
-            {{publishLink !== '' ? publishLink : "QR Code Placeholder"}}
-          </div>
+          <div class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg break-words">
+            <qrcode-vue class="mb-4" v-if="publishID !== ''" :value="publishLink" level="H"></qrcode-vue>
+            <span v-if="publishLink !== ''">
+              <a :href="publishLink">{{publishLink}}</a>
+            </span>
+            <span v-else>QR Code Placeholder</span>          </div>
         </div>
       </div>
     </div>
@@ -112,7 +114,7 @@ export default {
         posterColThree: true,
         footer: true
       },
-      publishLink: ""
+      publishID: ""
     };
   },
   methods: {
@@ -122,7 +124,6 @@ export default {
         .post(config.localServerUrl + "/loadPublishedPoster", { publishID: id })
         .then(function(response) {
           const posterData = response.data.poster;
-          that.$data.publishLink = response.data.qrCode;
           console.log(response);
           posterData.forEach(section => {
             const name = section.name;
@@ -147,7 +148,13 @@ export default {
     }
   },
   mounted() {
-    this.loadPoster(this.$route.params.id);
+    this.publishID = this.$route.params.id;
+    this.loadPoster(this.publishID);
+  },
+  computed: {
+    publishLink() {
+      return config.localClientUrl + "/#/p/" + this.publishID;
+    }
   }
 };
 </script>

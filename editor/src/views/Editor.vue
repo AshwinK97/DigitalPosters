@@ -4,18 +4,6 @@
       {{ snackbarMessage }}
       <v-btn color="pink" text @click="snackbar = false">Close</v-btn>
     </v-snackbar>
-    <modal class="rounded" name="onSave">
-      <div
-        class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3"
-        role="alert"
-      >
-        <p class="font-bold">Informational message</p>
-        <p class="text-sm">You are about to save the contents of this poster! Please check the data.</p>
-      </div>
-      <div class="text-green-700 p-8">
-        <p class="text-base">{{ allPosterData }}</p>
-      </div>
-    </modal>
     <modal name="onPublish">
       <div class="flex flex-col">
         <div
@@ -120,16 +108,16 @@
           <div
             @click="onAdd(credits)"
             v-show="!preview && credits.length === 0"
-            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700 cursor-pointer"
           >
             <div>Add Credits</div>
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
         </div>
         <div class="text-center w-full md:w-1/6 px-4">
-          <div class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg">
-            <qrcode-vue v-if="publishLink !== ''" :value="publishLink" level="H"></qrcode-vue>
-            <span v-if="publishLink !== ''">
+          <div class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg break-words">
+            <qrcode-vue class="mb-4" v-if="publishID !== ''" :value="publishLink" level="H"></qrcode-vue>
+            <span v-if="publishID !== ''">
               <a :href="publishLink">{{publishLink}}</a>
             </span>
             <span v-else>QR Code Placeholder</span>
@@ -280,7 +268,7 @@ export default {
   data() {
     return {
       preview: false,
-      publishLink: "",
+      publishID: "",
       userID: 2,
       posterID: 1,
       snackbar: false,
@@ -330,7 +318,7 @@ export default {
     },
     onSave() {
       const data = Object.assign(this.getAllPosterData(), {
-        publishLink: this.publishLink
+        publishID: this.publishID
       });
       console.log(data);
       // localStorage["posterSave"] = JSON.stringify(data);
@@ -360,10 +348,10 @@ export default {
             const posterData = response.data.poster;
 
             if (
-              response.data.qrCode !== null ||
-              response.data.qrCode !== undefined
+              response.data.publishID !== null ||
+              response.data.publishID !== undefined
             ) {
-              that.$data.publishLink = response.data.qrCode;
+              that.$data.publishID = response.data.publishID;
             }
 
             console.log(response);
@@ -396,14 +384,15 @@ export default {
     },
     onPublishConfirm() {
       const that = this;
-      const publishID = this.generateId();
+
+      if(this.publishID === "") {
+        this.publishID = this.generateId();
+      }
+
       const data = this.getAllPosterData();
       axios
-        .post(config.localServerUrl + "/publishPoster", { poster: data.poster, publishID: publishID })
+        .post(config.localServerUrl + "/publishPoster", { poster: data.poster, publishID: this.publishID })
         .then(function(response) {
-          // Send back published link in response for qrcode
-          that.$data.publishLink = "http://192.168.2.233:8080/#/p/" + publishID;
-
           that.onSave();
 
           that.snackbarMessage = response.data;
@@ -643,6 +632,11 @@ export default {
     this.posterID = parseInt(this.$route.params.posterID);
 
     this.loadPoster();
+  },
+  computed: {
+    publishLink() {
+      return config.localClientUrl + "/#/p/" + this.publishID;
+    }
   }
 };
 </script>

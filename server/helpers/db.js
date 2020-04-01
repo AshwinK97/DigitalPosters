@@ -21,7 +21,7 @@ const savePoster = data => {
             resolve(results);
           });
         } else {
-          collection.updateOne({ userID: data.userID, posterID: data.poster.id }, { $set: { posterContent: data.poster.content, publishLink: data.publishLink } }, (err, results) => {
+          collection.updateOne({ userID: data.userID, posterID: data.poster.id }, { $set: { posterContent: data.poster.content, publishID: data.publishID } }, (err, results) => {
             if (err) {
               reject(err);
             }

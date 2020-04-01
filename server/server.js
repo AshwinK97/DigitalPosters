@@ -45,14 +45,14 @@ app.post("/publishPoster", (req, res) => {
 app.post("/loadPoster", (req, res) => {
   console.log("User: " + req.body.userID + " Poster: " + req.body.posterID);
   db.loadPoster(req.body)
-    .then(data => res.send({ poster: data[0].posterContent, qrCode: data[0].publishLink }))
+    .then(data => res.send({ poster: data[0].posterContent, publishID: data[0].publishID }))
     .catch(err => res.send(err));
 });
 
 app.post("/loadPublishedPoster", (req, res) => {
   console.log("Poster: " + req.body.publishID);
   db.loadPublishedPoster(req.body)
-    .then(data => res.send({ poster: data[0].posterContent, qrCode: req.body.publishID }))
+    .then(data => res.send({ poster: data[0].posterContent }))
     .catch(err => res.send(err));
 });
 
