@@ -1,7 +1,7 @@
 <template>
   <div id="static-poster">
     <div class="w-full flex justify-between items-center">
-      <h1>Digital Posters</h1>
+      <h1>{{posterTitle}}</h1>
     </div>
     <div id="header" class="flex-col mb-4">
       <div class="text-center w-full" v-if="this.visiblity.header">
@@ -97,6 +97,7 @@ export default {
       preview: true,
       userID: 1,
       posterID: 1,
+      posterTitle: "",
       header: [],
       logo: [],
       credits: [],
@@ -124,6 +125,7 @@ export default {
         .post(config.localServerUrl + "/loadPublishedPoster", { publishID: id })
         .then(function(response) {
           const posterData = response.data.poster;
+          that.$data.posterTitle = response.data.title;
           console.log(response);
           posterData.forEach(section => {
             const name = section.name;

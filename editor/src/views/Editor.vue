@@ -2,7 +2,7 @@
   <div id="editor">
     <v-snackbar v-model="snackbar">
       {{ snackbarMessage }}
-      <v-btn color="pink" text @click="snackbar = false">Close</v-btn>
+      <button class="text-red-500" text @click="snackbar = false">Close</button>
     </v-snackbar>
     <modal name="onPublish">
       <div class="flex flex-col">
@@ -31,6 +31,11 @@
           class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mr-4 rounded"
         >Save</button>
         <button
+          v-if="!preview"
+          @click="() => {snackbarMessage='Turn Preview On to use Publish'; snackbar=true;}"
+          class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded opacity-50 cursor-not-allowed"
+        >Publish</button>
+        <button
           v-if="preview"
           @click="onPublish()"
           class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 mr-4 rounded"
@@ -43,34 +48,25 @@
       </div>
     </div>
     <div id="header" class="flex-col mb-4">
-      <div class="text-center w-full" v-if="this.visiblity.header">
-        <draggable
-          class="w-full px-4"
-          ghost-class="moving-card"
-          filter=".action-button"
-          :disabled="preview"
-          :list="header"
-          :animation="200"
+      <div class="text-center w-full px-4" v-if="this.visiblity.header">
+        <div v-if="header.length > 0">
+          <info-card
+            v-for="(box, index) in header"
+            :key="box.id"
+            :box="header[index]"
+            :preview="preview"
+            @on-delete="onDelete(header, index)"
+            @on-change="($event) => {header[index] = $event;}"
+          ></info-card>
+        </div>
+        <div
+          @click="onAdd(header)"
+          v-if="!preview && header.length === 0"
+          class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700 cursor-pointer"
         >
-          <div v-if="header.length > 0">
-            <info-card
-              v-for="(box, index) in header"
-              :key="box.id"
-              :box="header[index]"
-              :preview="preview"
-              @on-delete="onDelete(header, index)"
-              @on-change="onChange($event, header, index)"
-            ></info-card>
-          </div>
-          <div
-            @click="onAdd(header)"
-            v-if="!preview && header.length === 0"
-            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
-          >
-            <div>Add Header</div>
-            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
-          </div>
-        </draggable>
+          <div>Add Header</div>
+          <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+        </div>
       </div>
       <div class="flex flex-col md:flex-row text-center w-full">
         <div class="text-center w-full md:w-1/6 px-4" v-if="this.visiblity.logo">
@@ -79,16 +75,16 @@
               v-for="(box, index) in logo"
               name="logo"
               :key="box.id"
-              :box="box[index]"
+              :box="logo[index]"
               :preview="preview"
               @on-delete="onDelete(logo, index)"
-              @on-change="onChange($event, logo)"
+              @on-change="($event) => {logo[index] = $event;}"
             ></info-card>
           </div>
           <div
             @click="onAdd(logo)"
             v-if="!preview && logo.length === 0"
-            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700 cursor-pointer"
           >
             <div>Add Logo</div>
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
@@ -99,15 +95,15 @@
             <info-card
               v-for="(box, index) in credits"
               :key="box.id"
-              :box="box[id]"
+              :box="credits[index]"
               :preview="preview"
               @on-delete="onDelete(credits, index)"
-              @on-change="onChange($event, credits)"
+              @on-change="($event) => {credits[index] = $event;}"
             ></info-card>
           </div>
           <div
             @click="onAdd(credits)"
-            v-show="!preview && credits.length === 0"
+            v-if="!preview && credits.length === 0"
             class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700 cursor-pointer"
           >
             <div>Add Credits</div>
@@ -128,7 +124,7 @@
     <div id="body" class="flex flex-col lg:flex-row mb-4">
       <div class="text-center w-full md:w-1/3" v-if="this.visiblity.posterColOne">
         <draggable
-          class="w-full px-4"
+          class="w-full px-4 cursor-move"
           group="all-users"
           ghost-class="moving-card"
           filter=".action-button"
@@ -142,20 +138,21 @@
             :box="posterColOne[index]"
             :preview="preview"
             @on-delete="onDelete(posterColOne, index)"
-            @on-change="onChange($event, posterColOne, index)"
+            @on-change="($event) => {posterColOne[index] = $event;}"
           ></info-card>
           <div
             @click="onAdd(posterColOne)"
             v-if="!preview"
-            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700 cursor-pointer"
           >
+            <div>Add Card to Column</div>
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
         </draggable>
       </div>
       <div class="text-center w-full md:w-1/3" v-if="this.visiblity.posterColTwo">
         <draggable
-          class="w-full px-4"
+          class="w-full px-4 cursor-move"
           group="all-users"
           ghost-class="moving-card"
           filter=".action-button"
@@ -169,20 +166,21 @@
             :box="posterColTwo[index]"
             :preview="preview"
             @on-delete="onDelete(posterColTwo, index)"
-            @on-change="onChange($event, posterColTwo, index)"
+            @on-change="($event) => {posterColTwo[index] = $event;}"
           ></info-card>
           <div
             @click="onAdd(posterColTwo)"
             v-if="!preview"
-            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700 cursor-pointer"
           >
+            <div>Add Card to Column</div>
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
         </draggable>
       </div>
       <div class="text-center w-full md:w-1/3" v-if="this.visiblity.posterColThree">
         <draggable
-          class="w-full px-4"
+          class="w-full px-4 cursor-move"
           group="all-users"
           ghost-class="moving-card"
           filter=".action-button"
@@ -196,47 +194,39 @@
             :box="posterColThree[index]"
             :preview="preview"
             @on-delete="onDelete(posterColThree, index)"
-            @on-change="onChange($event, posterColThree, index)"
+            @on-change="($event) => {posterColThree[index] = $event;}"
           ></info-card>
           <div
             @click="onAdd(posterColThree)"
             v-if="!preview"
-            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex justify-center items-center w-full text-gray-500 hover:text-gray-700"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700 cursor-pointer"
           >
+            <div>Add Card to Column</div>
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
         </draggable>
       </div>
     </div>
     <div id="footer" class="flex mb-4">
-      <div class="text-center w-full" v-if="this.visiblity.footer">
-        <draggable
-          class="w-full px-4"
-          ghost-class="moving-card"
-          filter=".action-button"
-          :disabled="preview"
-          :list="footer"
-          :animation="200"
+      <div class="text-center w-full px-4" v-if="this.visiblity.footer">
+        <div v-if="footer.length > 0">
+          <info-card
+            v-for="(box, index) in footer"
+            :key="box.id"
+            :box="footer[index]"
+            :preview="preview"
+            @on-delete="onDelete(footer, index)"
+            @on-change="($event) => {footer[index] = $event;}"
+          ></info-card>
+        </div>
+        <div
+          @click="onAdd(footer)"
+          v-if="!preview && footer.length === 0"
+          class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700 cursor-pointer"
         >
-          <div v-if="footer.length > 0">
-            <info-card
-              v-for="(box, index) in footer"
-              :key="box.id"
-              :box="footer[index]"
-              :preview="preview"
-              @on-delete="onDelete(footer, index)"
-              @on-change="onChange($event, footer, index)"
-            ></info-card>
-          </div>
-          <div
-            @click="onAdd(footer)"
-            v-if="!preview && footer.length === 0"
-            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
-          >
-            <div>Add Footer</div>
-            <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
-          </div>
-        </draggable>
+          <div>Add Footer</div>
+          <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
+        </div>
       </div>
     </div>
   </div>
@@ -248,10 +238,7 @@ import "../assets/css/tailwind.css";
 import Draggable from "vuedraggable";
 import { Trash2Icon, PlusCircleIcon } from "vue-feather-icons";
 import QrcodeVue from "qrcode.vue";
-
 import InfoCard from "../components/InfoCard";
-
-import loadData from "../data/posterJSON.json";
 
 import axios from "axios";
 import config from "../../config.json";
@@ -297,16 +284,11 @@ export default {
     onDelete(list, index) {
       list.splice(index, 1);
     },
-    onChange(box, list, index) {
-      console.log(JSON.stringify(box));
-      list[index] = box;
-    },
-    onChange(box, item) {
-      item = box;
-    },
     onAdd(list) {
+      console.log(list);
+      const id = this.generateId();
       list.push({
-        id: this.generateId(),
+        id: id,
         body: {
           type: "doc",
           content: [
@@ -322,7 +304,6 @@ export default {
         publishID: this.publishID
       });
       console.log(data);
-      // localStorage["posterSave"] = JSON.stringify(data);
       const that = this;
       axios
         .post(config.localServerUrl + "/savePoster", data)
@@ -403,13 +384,20 @@ export default {
       axios
         .post(config.localServerUrl + "/publishPoster", {
           poster: data.poster,
-          publishID: this.publishID
+          publishID: this.publishID,
+          posterTitle: this.posterTitle
         })
         .then(function(response) {
           that.onSave();
 
           that.snackbarMessage = response.data;
           that.snackbar = true;
+
+          const publishRoute = that.$router.resolve({
+            name: "StaticPoster",
+            params: { id: that.publishID }
+          });
+          window.open(publishRoute.href, "_blank");
         })
         .catch(function(error) {
           console.log(error);

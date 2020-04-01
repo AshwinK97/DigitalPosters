@@ -52,7 +52,7 @@ app.post("/loadPoster", (req, res) => {
 app.post("/loadPublishedPoster", (req, res) => {
   console.log("Poster: " + req.body.publishID);
   db.loadPublishedPoster(req.body)
-    .then(data => res.send({ poster: data[0].posterContent }))
+    .then(data => res.send({ poster: data[0].posterContent, title: data[0].posterTitle }))
     .catch(err => res.send(err));
 });
 

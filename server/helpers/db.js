@@ -45,7 +45,7 @@ const publishPoster = data => {
           console.error(error);
         }
         if (results.length === 0) {
-          collection.insertOne({ posterContent: data.poster.content, publishID: data.publishID }, (err, results) => {
+          collection.insertOne({ posterContent: data.poster.content, publishID: data.publishID, posterTitle: data.posterTitle }, (err, results) => {
             if (err) {
               reject(err);
             }
@@ -53,7 +53,7 @@ const publishPoster = data => {
             resolve(results);
           });
         } else {
-          collection.updateOne({ publishID: data.publishID }, { $set: { posterContent: data.poster.content } }, (err, results) => {
+          collection.updateOne({ publishID: data.publishID }, { $set: { posterContent: data.poster.content, posterTitle: data.posterTitle } }, (err, results) => {
             if (err) {
               reject(err);
             }
