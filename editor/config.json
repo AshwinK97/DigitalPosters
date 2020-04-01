@@ -1,6 +1,6 @@
 {
   "serverUrl": "http://server.poster-cloud.studio",
   "localServerUrl": "http://localhost:3000",
-  "clientUrl": "http://www.poster-cloud.studio",
+  "clientUrl": "http://www.poster-cloud.studio/app",
   "localClientUrl": "http://localhost:8080"
 }

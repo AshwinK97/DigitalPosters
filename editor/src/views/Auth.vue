@@ -96,7 +96,7 @@ export default {
     onLogin() {
       const vm = this;
       axios
-        .post(config.localServerUrl + "/login", {
+        .post(config.serverUrl + "/login", {
           username: this.username,
           password: this.password
         })
@@ -121,7 +121,7 @@ export default {
       const vm = this;
       if (this.password === this.confirmPassword) {
         axios
-          .post(config.localServerUrl + "/signup", {
+          .post(config.serverUrl + "/signup", {
             username: this.username,
             password: this.password
           })

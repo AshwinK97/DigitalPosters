@@ -117,7 +117,7 @@ export default {
     loadPoster(id) {
       const vm = this;
       axios
-        .post(config.localServerUrl + "/loadPublishedPoster", { publishID: id })
+        .post(config.serverUrl + "/loadPublishedPoster", { publishID: id })
         .then(function(response) {
           const posterData = response.data.poster;
           vm.$data.posterTitle = response.data.title;
@@ -150,7 +150,7 @@ export default {
   },
   computed: {
     publishLink() {
-      return config.localClientUrl + "/#/p/" + this.publishID;
+      return config.clientUrl + "/#/p/" + this.publishID;
     }
   }
 };

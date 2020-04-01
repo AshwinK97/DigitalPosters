@@ -97,7 +97,7 @@ export default {
     loadPostersByUserID(id) {
       const vm = this;
       axios
-        .post(config.localServerUrl + "/loadPostersByUserID", { userID: id })
+        .post(config.serverUrl + "/loadPostersByUserID", { userID: id })
         .then(function(response) {
           console.log(response);
           vm.$data.posters = response.data.posters;
@@ -131,7 +131,7 @@ export default {
 
       const vm = this;
       axios
-        .post(config.localServerUrl + "/savePoster", data)
+        .post(config.serverUrl + "/savePoster", data)
         .then(function(response) {
           console.log(response);
           vm.loadPostersByUserID(vm.userID);
@@ -148,7 +148,7 @@ export default {
       const vm = this;
       console.log(`Poster: ${id}`);
       axios
-        .delete(config.localServerUrl + "/deletePoster", {
+        .delete(config.serverUrl + "/deletePoster", {
           data: { userID: this.userID, posterID: id }
         })
         .then(function(response) {

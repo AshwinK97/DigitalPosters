@@ -323,7 +323,7 @@ export default {
       console.log(data);
       const vm = this;
       axios
-        .post(config.localServerUrl + "/savePoster", data)
+        .post(config.serverUrl + "/savePoster", data)
         .then(function(response) {
           console.log(response);
           vm.$data.snackbarMessage = response.data;
@@ -347,7 +347,7 @@ export default {
 
       const data = this.getAllPosterData();
       axios
-        .post(config.localServerUrl + "/publishPoster", {
+        .post(config.serverUrl + "/publishPoster", {
           poster: data.poster,
           publishID: this.publishID,
           posterTitle: this.posterTitle
@@ -394,7 +394,7 @@ export default {
     loadPoster() {
       const vm = this;
       axios
-        .post(config.localServerUrl + "/loadPoster", {
+        .post(config.serverUrl + "/loadPoster", {
           userID: this.userID,
           posterID: this.posterID
         })
@@ -487,7 +487,7 @@ export default {
   },
   computed: {
     publishLink() {
-      return config.localClientUrl + "/#/p/" + this.publishID;
+      return config.clientUrl + "/#/p/" + this.publishID;
     }
   }
 };
