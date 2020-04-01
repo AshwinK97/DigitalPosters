@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", config.domain);
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
   next();
 });
 
@@ -28,6 +29,13 @@ app.post("/savePoster", (req, res) => {
     .catch(err => res.send(err));
 });
 
+app.delete("/deletePoster", (req, res) => {
+  console.log(JSON.stringify(req.body));
+  db.deletePoster(req.body)
+    .then(() => res.send("Save success!"))
+    .catch(err => res.send(err));
+})
+
 app.post("/publishPoster", (req, res) => {
   db.publishPoster(req.body)
     .then(() => res.send("Poster published!"))
@@ -37,14 +45,21 @@ app.post("/publishPoster", (req, res) => {
 app.post("/loadPoster", (req, res) => {
   console.log("User: " + req.body.userID + " Poster: " + req.body.posterID);
   db.loadPoster(req.body)
-    .then(data => res.send({poster: data[0].posterContent, qrCode: data[0].publishLink}))
+    .then(data => res.send({ poster: data[0].posterContent, qrCode: data[0].publishLink }))
     .catch(err => res.send(err));
 });
 
 app.post("/loadPublishedPoster", (req, res) => {
   console.log("Poster: " + req.body.publishID);
   db.loadPublishedPoster(req.body)
-    .then(data => res.send({poster: data[0].posterContent, qrCode: req.body.publishID}))
+    .then(data => res.send({ poster: data[0].posterContent, qrCode: req.body.publishID }))
+    .catch(err => res.send(err));
+});
+
+app.post("/loadPostersByUserID", (req, res) => {
+  console.log("User: " + req.body.userID);
+  db.loadPostersByUserID(req.body)
+    .then(data => res.send({ posters: data }))
     .catch(err => res.send(err));
 });
 
