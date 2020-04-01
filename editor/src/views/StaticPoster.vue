@@ -1,7 +1,7 @@
 <template>
   <div id="static-poster">
     <div class="w-full flex justify-between items-center">
-      <h1>Digital Posters</h1>
+      <h1>{{posterTitle}}</h1>
     </div>
     <div id="header" class="flex-col mb-4">
       <div class="text-center w-full" v-if="this.visiblity.header">
@@ -11,14 +11,10 @@
       </div>
       <div class="flex flex-col md:flex-row text-center w-full">
         <div class="text-center w-full md:w-1/6 px-4" v-if="this.visiblity.logo">
-          <info-card-static :key="logo.id" :box="logo[0]"></info-card-static>
+          <info-card-static v-for="(box, index) in logo" :key="box.id" :box="logo[index]"></info-card-static>
         </div>
         <div class="text-center w-full md:w-2/3 px-4" v-if="this.visiblity.credits">
-          <info-card-static
-            :key="credits.id"
-            :box="credits[0]"
-            @on-change="onChange($event, credits)"
-          ></info-card-static>
+          <info-card-static v-for="(box, index) in credits" :key="box.id" :box="credits[index]"></info-card-static>
         </div>
         <div class="text-center w-full md:w-1/6 px-4" v-if="this.visiblity.qr">
           <div class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg break-words">
@@ -26,7 +22,8 @@
             <span v-if="publishLink !== ''">
               <a :href="publishLink">{{publishLink}}</a>
             </span>
-            <span v-else>QR Code Placeholder</span>          </div>
+            <span v-else>QR Code Placeholder</span>
+          </div>
         </div>
       </div>
     </div>
@@ -95,8 +92,7 @@ export default {
   data() {
     return {
       preview: true,
-      userID: 1,
-      posterID: 1,
+      posterTitle: "",
       header: [],
       logo: [],
       credits: [],
@@ -119,19 +115,20 @@ export default {
   },
   methods: {
     loadPoster(id) {
-      const that = this;
+      const vm = this;
       axios
         .post(config.localServerUrl + "/loadPublishedPoster", { publishID: id })
         .then(function(response) {
           const posterData = response.data.poster;
-          console.log(response);
+          vm.$data.posterTitle = response.data.title;
+
           posterData.forEach(section => {
             const name = section.name;
             let hasContent = false;
-            // TODO: QR code data will cause issues, remember to fix here by avoiding QR code data
+
             if (section.content.length > 0) {
               section.content.forEach((content, index) => {
-                that.$set(that.$data[name], index, content);
+                vm.$set(vm.$data[name], index, content);
               });
 
               hasContent =
@@ -139,7 +136,7 @@ export default {
                 section.content[0].body.content.length > 1;
             }
 
-            that.$data.visiblity[name] = hasContent;
+            vm.$data.visiblity[name] = hasContent;
           });
         })
         .catch(function(error) {
@@ -159,8 +156,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.moving-card {
-  @apply opacity-50 bg-gray-100 border border-blue-500;
-}
-</style>
+<style lang="scss"></style>

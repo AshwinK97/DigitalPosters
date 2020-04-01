@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Auth from '../views/Auth.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Editor from '../views/Editor.vue'
 import StaticPoster from '../views/StaticPoster.vue'
@@ -7,6 +8,11 @@ import StaticPoster from '../views/StaticPoster.vue'
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/',
+    name: 'Authentication',
+    component: Auth
+  },
   {
     path: '/u/:id',
     name: 'Dashboard',
