@@ -13,7 +13,7 @@ const savePoster = data => {
         }
         if (results.length === 0) {
           console.log(`Title: ${data.poster.title} Description: ${data.poster.description}`)
-          collection.insertOne({ userID: data.userID, posterID: data.poster.id, posterContent: data.poster.content, posterTitle: data.poster.title, posterDescription: data.poster.description }, (err, results) => {
+          collection.insertOne({ userID: data.userID, posterID: data.poster.id, posterContent: data.poster.content, posterTitle: data.poster.title, posterDescription: data.poster.description, publishID: "" }, (err, results) => {
             if (err) {
               reject(err);
             }

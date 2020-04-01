@@ -23,7 +23,7 @@
       </div>
     </modal>
     <div class="w-full flex justify-between items-center">
-      <h1>Digital Posters</h1>
+      <h1>{{posterTitle}}</h1>
       <div>
         <button
           v-if="!preview"
@@ -271,6 +271,7 @@ export default {
       publishID: "",
       userID: 2,
       posterID: 1,
+      posterTitle: "",
       snackbar: false,
       snackbarMessage: "",
       header: [],
@@ -344,6 +345,8 @@ export default {
           posterID: this.posterID
         })
         .then(function(response) {
+          console.log(response);
+
           if (response.data.poster != undefined) {
             const posterData = response.data.poster;
 
@@ -352,6 +355,13 @@ export default {
               response.data.publishID !== undefined
             ) {
               that.$data.publishID = response.data.publishID;
+            }
+
+            if (
+              response.data.posterTitle !== null ||
+              response.data.posterTitle !== undefined
+            ) {
+              that.$data.posterTitle = response.data.posterTitle;
             }
 
             console.log(response);
@@ -385,13 +395,16 @@ export default {
     onPublishConfirm() {
       const that = this;
 
-      if(this.publishID === "") {
+      if (this.publishID === "") {
         this.publishID = this.generateId();
       }
 
       const data = this.getAllPosterData();
       axios
-        .post(config.localServerUrl + "/publishPoster", { poster: data.poster, publishID: this.publishID })
+        .post(config.localServerUrl + "/publishPoster", {
+          poster: data.poster,
+          publishID: this.publishID
+        })
         .then(function(response) {
           that.onSave();
 
@@ -629,7 +642,7 @@ export default {
   },
   mounted() {
     this.userID = parseInt(this.$route.params.userID);
-    this.posterID = parseInt(this.$route.params.posterID);
+    this.posterID = this.$route.params.posterID;
 
     this.loadPoster();
   },

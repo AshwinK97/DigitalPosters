@@ -45,7 +45,7 @@ app.post("/publishPoster", (req, res) => {
 app.post("/loadPoster", (req, res) => {
   console.log("User: " + req.body.userID + " Poster: " + req.body.posterID);
   db.loadPoster(req.body)
-    .then(data => res.send({ poster: data[0].posterContent, publishID: data[0].publishID }))
+    .then(data => res.send({ poster: data[0].posterContent, publishID: data[0].publishID, posterTitle: data[0].posterTitle }))
     .catch(err => res.send(err));
 });
 
