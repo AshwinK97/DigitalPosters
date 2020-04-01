@@ -277,7 +277,16 @@ export default {
         posterColTwo: true,
         posterColThree: true,
         footer: true
-      }
+      },
+      sections: [
+        "header",
+        "logo",
+        "credits",
+        "posterColOne",
+        "posterColTwo",
+        "posterColThree",
+        "footer"
+      ]
     };
   },
   methods: {
@@ -285,8 +294,7 @@ export default {
       list.splice(index, 1);
     },
     onAdd(list) {
-      console.log(list);
-      const id = this.generateId();
+      const id = this.generateID();
       list.push({
         id: id,
         body: {
@@ -318,6 +326,62 @@ export default {
           that.$data.snackbar = true;
         });
     },
+    onPublish() {
+      this.$modal.show("onPublish");
+    },
+    onPublishConfirm() {
+      const that = this;
+
+      if (this.publishID === "") {
+        this.publishID = this.generateID();
+      }
+
+      const data = this.getAllPosterData();
+      axios
+        .post(config.localServerUrl + "/publishPoster", {
+          poster: data.poster,
+          publishID: this.publishID,
+          posterTitle: this.posterTitle
+        })
+        .then(function(response) {
+          that.onSave();
+
+          that.snackbarMessage = response.data;
+          that.snackbar = true;
+          that.onPreview();
+
+          const publishRoute = that.$router.resolve({
+            name: "StaticPoster",
+            params: { id: that.publishID }
+          });
+          window.open(publishRoute.href, "_blank");
+        })
+        .catch(function(error) {
+          console.log(error);
+          that.snackbarMessage = error;
+          that.snackbar = true;
+        });
+
+      this.closeModal("onPublish");
+    },
+    onPreview() {
+      this.preview = !this.preview;
+
+      if (this.preview) {
+        this.updateVisibility();
+      } else {
+        this.visiblity = {
+          header: true,
+          logo: true,
+          credits: true,
+          qr: true,
+          posterColOne: true,
+          posterColTwo: true,
+          posterColThree: true,
+          footer: true
+        };
+      }
+    },
     loadPoster() {
       const that = this;
       axios
@@ -345,12 +409,10 @@ export default {
               that.$data.posterTitle = response.data.posterTitle;
             }
 
-            console.log(response);
-            console.log(posterData);
             posterData.forEach(section => {
               const name = section.name;
               let hasContent = false;
-              // TODO: QR code data will cause issues, remember to fix here by avoiding QR code data
+
               if (section.content !== undefined) {
                 section.content.forEach((content, index) => {
                   that.$set(that.$data[name], index, content);
@@ -370,81 +432,16 @@ export default {
           console.log(error);
         });
     },
-    onPublish() {
-      this.$modal.show("onPublish");
-    },
-    onPublishConfirm() {
-      const that = this;
-
-      if (this.publishID === "") {
-        this.publishID = this.generateId();
-      }
-
-      const data = this.getAllPosterData();
-      axios
-        .post(config.localServerUrl + "/publishPoster", {
-          poster: data.poster,
-          publishID: this.publishID,
-          posterTitle: this.posterTitle
-        })
-        .then(function(response) {
-          that.onSave();
-
-          that.snackbarMessage = response.data;
-          that.snackbar = true;
-
-          const publishRoute = that.$router.resolve({
-            name: "StaticPoster",
-            params: { id: that.publishID }
-          });
-          window.open(publishRoute.href, "_blank");
-        })
-        .catch(function(error) {
-          console.log(error);
-          that.snackbarMessage = error;
-          that.snackbar = true;
-        });
-
-      this.closeModal("onPublish");
-    },
     closeModal(modalName) {
       this.$modal.hide(modalName);
     },
-    generateId() {
+    generateID() {
       return Math.random()
         .toString(36)
         .substr(2, 9);
     },
-    onPreview() {
-      this.preview = !this.preview;
-
-      if (this.preview) {
-        this.updateVisibility();
-      } else {
-        this.visiblity = {
-          header: true,
-          logo: true,
-          credits: true,
-          qr: true,
-          posterColOne: true,
-          posterColTwo: true,
-          posterColThree: true,
-          footer: true
-        };
-      }
-    },
     updateVisibility() {
-      const sections = [
-        "header",
-        "logo",
-        "credits",
-        "posterColOne",
-        "posterColTwo",
-        "posterColThree",
-        "footer"
-      ];
-
-      sections.forEach(section => {
+      this.sections.forEach(section => {
         if (this.$data[section].length > 0) {
           const data = JSON.parse(localStorage[this.$data[section][0].id]);
           const hasContent =
@@ -457,162 +454,8 @@ export default {
       });
     },
     getAllPosterData() {
-      const headerData = [
-        {
-          name: "header",
-          content: this.header.map(box => {
-            if (localStorage[box.id] !== undefined) {
-              return {
-                id: box.id,
-                body: JSON.parse(localStorage[box.id])
-              };
-            } else {
-              return {
-                id: box.id,
-                body: {
-                  type: "doc",
-                  content: []
-                }
-              };
-            }
-          })
-        }
-      ];
-      const logoData = [
-        {
-          name: "logo",
-          content: this.logo.map(box => {
-            if (localStorage[box.id] !== undefined) {
-              return {
-                id: box.id,
-                body: JSON.parse(localStorage[box.id])
-              };
-            } else {
-              return {
-                id: box.id,
-                body: {
-                  type: "doc",
-                  content: []
-                }
-              };
-            }
-          })
-        }
-      ];
-      const creditsData = [
-        {
-          name: "credits",
-          content: this.credits.map(box => {
-            if (localStorage[box.id] !== undefined) {
-              return {
-                id: box.id,
-                body: JSON.parse(localStorage[box.id])
-              };
-            } else {
-              return {
-                id: box.id,
-                body: {
-                  type: "doc",
-                  content: []
-                }
-              };
-            }
-          })
-        }
-      ];
-      const posterColOneData = [
-        {
-          name: "posterColOne",
-          content: this.posterColOne.map(box => {
-            if (localStorage[box.id] !== undefined) {
-              return {
-                id: box.id,
-                body: JSON.parse(localStorage[box.id])
-              };
-            } else {
-              return {
-                id: box.id,
-                body: {
-                  type: "doc",
-                  content: []
-                }
-              };
-            }
-          })
-        }
-      ];
-      const posterColTwoData = [
-        {
-          name: "posterColTwo",
-          content: this.posterColTwo.map(box => {
-            if (localStorage[box.id] !== undefined) {
-              return {
-                id: box.id,
-                body: JSON.parse(localStorage[box.id])
-              };
-            } else {
-              return {
-                id: box.id,
-                body: {
-                  type: "doc",
-                  content: []
-                }
-              };
-            }
-          })
-        }
-      ];
-      const posterColThreeData = [
-        {
-          name: "posterColThree",
-          content: this.posterColThree.map(box => {
-            if (localStorage[box.id] !== undefined) {
-              return {
-                id: box.id,
-                body: JSON.parse(localStorage[box.id])
-              };
-            } else {
-              return {
-                id: box.id,
-                body: {
-                  type: "doc",
-                  content: []
-                }
-              };
-            }
-          })
-        }
-      ];
-      const footerData = [
-        {
-          name: "footer",
-          content: this.footer.map(box => {
-            if (localStorage[box.id] !== undefined) {
-              return {
-                id: box.id,
-                body: JSON.parse(localStorage[box.id])
-              };
-            } else {
-              return {
-                id: box.id,
-                body: {
-                  type: "doc",
-                  content: []
-                }
-              };
-            }
-          })
-        }
-      ];
-
-      const allPosterData = headerData.concat(
-        logoData,
-        creditsData,
-        posterColOneData,
-        posterColTwoData,
-        posterColThreeData,
-        footerData
-      );
+      const that = this;
+      const allPosterData = this.sections.map((section) => ({name: section, content: that.$data[section]}))
 
       return {
         userID: this.userID,
@@ -621,11 +464,6 @@ export default {
           content: allPosterData
         }
       };
-    }
-  },
-  computed: {
-    allPosterData() {
-      return this.getAllPosterData();
     }
   },
   mounted() {

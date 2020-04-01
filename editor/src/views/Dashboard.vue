@@ -107,7 +107,7 @@ export default {
     },
     addPoster() {
       console.log("Adding Poster initiated");
-      this.posterID = this.generateId();
+      this.posterID = this.generateID();
       const data = {
         userID: this.userID,
         poster: {
@@ -155,7 +155,7 @@ export default {
           console.log(error);
         });
     },
-    generateId() {
+    generateID() {
       return Math.random()
         .toString(36)
         .substr(2, 9);
