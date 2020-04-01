@@ -37,24 +37,30 @@
     <div class="w-full flex justify-between items-center">
       <h1>Digital Posters</h1>
     </div>
-    <div class="flex flex-col md:flex-row text-center w-full group">
+    <div class="flex flex-wrap items-stretch text-center w-full group">
       <div
         v-for="poster in posters"
         :key="poster.title"
-        class="w-full md:w-1/4 mr-4 p-4 min-h-1/3 rounded-lg overflow-hidden bg-white shadow-lg transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-104"
+        class="w-full md:w-1/4 p-2 min-h-1/3 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-104"
       >
-        <Trash2Icon
-          @click="onDelete(poster.title)"
-          size="2x"
-          class="p-1 focus:shadow-outline text-red-500 hover:text-red-600"
-        />
-        <div class="px-2 py-4">
-          <div class="font-bold text-xl mb-2">{{poster.title}}</div>
-          <p class="text-gray-700 text-base">{{poster.description}}</p>
+        <div class="min-h-full p-4 rounded-lg bg-white shadow-lg">
+          <Trash2Icon
+            @click="onDelete(poster.title)"
+            size="2x"
+            class="p-1 focus:shadow-outline text-red-500 hover:text-red-600"
+          />
+          <div class="px-2 py-4 h-full overflow-hidden">
+            <div class="font-bold text-xl mb-2">{{poster.title}}</div>
+            <p class="text-gray-700 text-base">{{poster.description}}</p>
+          </div>
+          <router-link :to="{ name: 'Editor', params: { userID: userID, posterID: poster.id }}">
+            <button
+              class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            >Edit</button>
+          </router-link>
         </div>
-        <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Edit</button>
       </div>
-      <div class="w-full md:w-1/4" @click="() => {this.$modal.show('addPoster')}">
+      <div class="w-full md:w-1/4 p-2 min-h-1/3" @click="() => {this.$modal.show('addPoster')}">
         <div
           class="w-full min-h-full mr-4 p-4 rounded-lg overflow-hidden bg-white shadow-lg flex flex-col justify-center items-center text-gray-500 hover:text-gray-700"
         >
@@ -136,14 +142,16 @@ export default {
       const that = this;
       console.log(`Poster: ${id}`);
       axios
-        .delete(config.localServerUrl + "/deletePoster", { data: {userID: this.userID, posterID: id}})
+        .delete(config.localServerUrl + "/deletePoster", {
+          data: { userID: this.userID, posterID: id }
+        })
         .then(function(response) {
           console.log(response);
-          that.loadPostersByUserID(that.userID)
+          that.loadPostersByUserID(that.userID);
         })
         .catch(function(error) {
           console.log(error);
-        })
+        });
     },
     generateId() {
       return Math.random()
