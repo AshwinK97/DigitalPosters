@@ -49,6 +49,7 @@
             size="2x"
             class="p-1 focus:shadow-outline text-red-500 hover:text-red-600 cursor-pointer"
           />
+          <img class="w-full object-contain h-48" :src="poster.image" />
           <div class="px-2 py-4 mb-4 h-24 overflow-hidden">
             <div class="font-bold text-xl mb-2 text-gray-700">{{poster.title}}</div>
             <p class="text-gray-700 text-base">{{poster.description}}</p>
@@ -62,7 +63,7 @@
       </div>
       <div class="w-full md:w-1/4 p-2" @click="() => {this.$modal.show('addPoster')}">
         <div
-          class="w-full mr-4 p-4 rounded-lg overflow-hidden bg-white shadow-lg flex flex-col justify-center items-center text-gray-500 hover:text-gray-700 cursor-pointer"
+          class="w-full h-full mr-4 p-4 rounded-lg overflow-hidden bg-white shadow-lg flex flex-col justify-center items-center text-gray-500 hover:text-gray-700 cursor-pointer"
         >
           <div>Add Poster</div>
           <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
@@ -94,12 +95,12 @@ export default {
   },
   methods: {
     loadPostersByUserID(id) {
-      const that = this;
+      const vm = this;
       axios
         .post(config.localServerUrl + "/loadPostersByUserID", { userID: id })
         .then(function(response) {
           console.log(response);
-          that.$data.posters = response.data.posters;
+          vm.$data.posters = response.data.posters;
         })
         .catch(function(error) {
           console.log(error);
@@ -128,20 +129,23 @@ export default {
 
       console.log(data);
 
-      const that = this;
+      const vm = this;
       axios
         .post(config.localServerUrl + "/savePoster", data)
         .then(function(response) {
           console.log(response);
-          that.loadPostersByUserID(that.userID);
-          that.$router.push({ name: 'Editor', params: { userID: that.userID, posterID: that.posterID }})
+          vm.loadPostersByUserID(vm.userID);
+          vm.$router.push({
+            name: "Editor",
+            params: { userID: vm.userID, posterID: vm.posterID }
+          });
         })
         .catch(function(error) {
           console.log(error);
         });
     },
     onDelete(id) {
-      const that = this;
+      const vm = this;
       console.log(`Poster: ${id}`);
       axios
         .delete(config.localServerUrl + "/deletePoster", {
@@ -149,7 +153,7 @@ export default {
         })
         .then(function(response) {
           console.log(response);
-          that.loadPostersByUserID(that.userID);
+          vm.loadPostersByUserID(vm.userID);
         })
         .catch(function(error) {
           console.log(error);

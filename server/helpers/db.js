@@ -13,7 +13,7 @@ const savePoster = data => {
         }
         if (results.length === 0) {
           console.log(`Title: ${data.poster.title} Description: ${data.poster.description}`)
-          collection.insertOne({ userID: data.userID, posterID: data.poster.id, posterContent: data.poster.content, posterTitle: data.poster.title, posterDescription: data.poster.description, publishID: "" }, (err, results) => {
+          collection.insertOne({ userID: data.userID, posterID: data.poster.id, posterContent: data.poster.content, posterTitle: data.poster.title, posterDescription: data.poster.description, posterImage: "", publishID: "" }, (err, results) => {
             if (err) {
               reject(err);
             }
@@ -21,7 +21,7 @@ const savePoster = data => {
             resolve(results);
           });
         } else {
-          collection.updateOne({ userID: data.userID, posterID: data.poster.id }, { $set: { posterContent: data.poster.content, publishID: data.publishID } }, (err, results) => {
+          collection.updateOne({ userID: data.userID, posterID: data.poster.id }, { $set: { posterContent: data.poster.content, publishID: data.publishID, posterImage: data.posterImage } }, (err, results) => {
             if (err) {
               reject(err);
             }
@@ -112,13 +112,15 @@ const loadPostersByUserID = data => {
             return {
               id: data.posterID,
               title: data.posterID,
-              description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil."
+              description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.",
+              image: ""
             }
           } else {
             return {
               id: data.posterID,
               title: data.posterTitle,
-              description: data.posterDescription
+              description: data.posterDescription,
+              image: data.posterImage
             }
           }
         });

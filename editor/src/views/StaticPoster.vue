@@ -115,12 +115,12 @@ export default {
   },
   methods: {
     loadPoster(id) {
-      const that = this;
+      const vm = this;
       axios
         .post(config.localServerUrl + "/loadPublishedPoster", { publishID: id })
         .then(function(response) {
           const posterData = response.data.poster;
-          that.$data.posterTitle = response.data.title;
+          vm.$data.posterTitle = response.data.title;
 
           posterData.forEach(section => {
             const name = section.name;
@@ -128,7 +128,7 @@ export default {
 
             if (section.content.length > 0) {
               section.content.forEach((content, index) => {
-                that.$set(that.$data[name], index, content);
+                vm.$set(vm.$data[name], index, content);
               });
 
               hasContent =
@@ -136,7 +136,7 @@ export default {
                 section.content[0].body.content.length > 1;
             }
 
-            that.$data.visiblity[name] = hasContent;
+            vm.$data.visiblity[name] = hasContent;
           });
         })
         .catch(function(error) {

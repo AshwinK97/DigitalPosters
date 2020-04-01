@@ -1,5 +1,5 @@
 <template>
-  <div id="editor">
+  <div id="editor" ref="poster">
     <v-snackbar v-model="snackbar">
       {{ snackbarMessage }}
       <button class="text-red-500" text @click="snackbar = false">Close</button>
@@ -259,6 +259,7 @@ export default {
       userID: 2,
       posterID: 1,
       posterTitle: "",
+      posterImage: "",
       snackbar: false,
       snackbarMessage: "",
       header: [],
@@ -307,30 +308,38 @@ export default {
         }
       });
     },
-    onSave() {
+    async onSnapshot() {
+      const el = this.$refs.poster;
+      this.posterImage = await this.$html2canvas(el, {
+        type: "dataURL"
+      });
+    },
+    async onSave() {
+      await this.onSnapshot();
       const data = Object.assign(this.getAllPosterData(), {
-        publishID: this.publishID
+        publishID: this.publishID,
+        posterImage: this.posterImage
       });
       console.log(data);
-      const that = this;
+      const vm = this;
       axios
         .post(config.localServerUrl + "/savePoster", data)
         .then(function(response) {
           console.log(response);
-          that.$data.snackbarMessage = response.data;
-          that.$data.snackbar = true;
+          vm.$data.snackbarMessage = response.data;
+          vm.$data.snackbar = true;
         })
         .catch(function(error) {
           console.log(error);
-          that.$data.snackbarMessage = response.data;
-          that.$data.snackbar = true;
+          vm.$data.snackbarMessage = response.data;
+          vm.$data.snackbar = true;
         });
     },
     onPublish() {
       this.$modal.show("onPublish");
     },
     onPublishConfirm() {
-      const that = this;
+      const vm = this;
 
       if (this.publishID === "") {
         this.publishID = this.generateID();
@@ -344,22 +353,22 @@ export default {
           posterTitle: this.posterTitle
         })
         .then(function(response) {
-          that.onSave();
+          vm.onSave();
 
-          that.snackbarMessage = response.data;
-          that.snackbar = true;
-          that.onPreview();
+          vm.snackbarMessage = response.data;
+          vm.snackbar = true;
+          vm.onPreview();
 
-          const publishRoute = that.$router.resolve({
+          const publishRoute = vm.$router.resolve({
             name: "StaticPoster",
-            params: { id: that.publishID }
+            params: { id: vm.publishID }
           });
           window.open(publishRoute.href, "_blank");
         })
         .catch(function(error) {
           console.log(error);
-          that.snackbarMessage = error;
-          that.snackbar = true;
+          vm.snackbarMessage = error;
+          vm.snackbar = true;
         });
 
       this.closeModal("onPublish");
@@ -383,7 +392,7 @@ export default {
       }
     },
     loadPoster() {
-      const that = this;
+      const vm = this;
       axios
         .post(config.localServerUrl + "/loadPoster", {
           userID: this.userID,
@@ -399,14 +408,14 @@ export default {
               response.data.publishID !== null ||
               response.data.publishID !== undefined
             ) {
-              that.$data.publishID = response.data.publishID;
+              vm.$data.publishID = response.data.publishID;
             }
 
             if (
               response.data.posterTitle !== null ||
               response.data.posterTitle !== undefined
             ) {
-              that.$data.posterTitle = response.data.posterTitle;
+              vm.$data.posterTitle = response.data.posterTitle;
             }
 
             posterData.forEach(section => {
@@ -415,7 +424,7 @@ export default {
 
               if (section.content !== undefined) {
                 section.content.forEach((content, index) => {
-                  that.$set(that.$data[name], index, content);
+                  vm.$set(vm.$data[name], index, content);
                   localStorage[content.id] = JSON.stringify(content.body);
                 });
 
@@ -423,7 +432,7 @@ export default {
               }
 
               if (hasContent === false) {
-                that.onDelete(that.$data[name], 0);
+                vm.onDelete(vm.$data[name], 0);
               }
             });
           }
@@ -454,8 +463,11 @@ export default {
       });
     },
     getAllPosterData() {
-      const that = this;
-      const allPosterData = this.sections.map((section) => ({name: section, content: that.$data[section]}))
+      const vm = this;
+      const allPosterData = this.sections.map(section => ({
+        name: section,
+        content: vm.$data[section]
+      }));
 
       return {
         userID: this.userID,
@@ -471,6 +483,7 @@ export default {
     this.posterID = this.$route.params.posterID;
 
     this.loadPoster();
+    this.onSave();
   },
   computed: {
     publishLink() {

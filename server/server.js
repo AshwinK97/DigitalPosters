@@ -9,20 +9,16 @@ const db = require("./helpers/db");
 const app = express();
 app.use(fileUpload());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }))
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", config.domain);
+  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
   next();
 });
 
+
 app.post("/savePoster", (req, res) => {
-  // const posterData = req.body
-  // console.log(posterData);
-  // let posterData = fs.readFileSync("./posterJSON.json");
-  // const posterInfo = JSON.parse(posterData);
-  // console.log(req.body.publishLink);
   console.log("User: " + req.body.userID + " Poster: " + req.body.poster.id);
   db.savePoster(req.body)
     .then(() => res.send("Save success!"))
