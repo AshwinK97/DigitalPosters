@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", config.domain);
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
   next();
 });
 
@@ -21,12 +22,19 @@ app.post("/savePoster", (req, res) => {
   // console.log(posterData);
   // let posterData = fs.readFileSync("./posterJSON.json");
   // const posterInfo = JSON.parse(posterData);
-  console.log(req.body.publishLink);
-  
+  // console.log(req.body.publishLink);
+  console.log("User: " + req.body.userID + " Poster: " + req.body.poster.id);
   db.savePoster(req.body)
     .then(() => res.send("Save success!"))
     .catch(err => res.send(err));
 });
+
+app.delete("/deletePoster", (req, res) => {
+  console.log(JSON.stringify(req.body));
+  db.deletePoster(req.body)
+    .then(() => res.send("Save success!"))
+    .catch(err => res.send(err));
+})
 
 app.post("/publishPoster", (req, res) => {
   db.publishPoster(req.body)
@@ -35,9 +43,23 @@ app.post("/publishPoster", (req, res) => {
 });
 
 app.post("/loadPoster", (req, res) => {
-  console.log(req.body.userID);
-  db.loadPoster(req.body.userID)
-    .then(data => res.send({poster: data[0].posterContent, qrCode: data[0].publishLink}))
+  console.log("User: " + req.body.userID + " Poster: " + req.body.posterID);
+  db.loadPoster(req.body)
+    .then(data => res.send({ poster: data[0].posterContent, publishID: data[0].publishID, posterTitle: data[0].posterTitle }))
+    .catch(err => res.send(err));
+});
+
+app.post("/loadPublishedPoster", (req, res) => {
+  console.log("Poster: " + req.body.publishID);
+  db.loadPublishedPoster(req.body)
+    .then(data => res.send({ poster: data[0].posterContent }))
+    .catch(err => res.send(err));
+});
+
+app.post("/loadPostersByUserID", (req, res) => {
+  console.log("User: " + req.body.userID);
+  db.loadPostersByUserID(req.body)
+    .then(data => res.send({ posters: data }))
     .catch(err => res.send(err));
 });
 

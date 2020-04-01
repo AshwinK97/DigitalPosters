@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Dashboard from '../views/Dashboard.vue'
 import Editor from '../views/Editor.vue'
 import StaticPoster from '../views/StaticPoster.vue'
 
@@ -7,7 +8,12 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '/u/:id',
+    name: 'Dashboard',
+    component: Dashboard
+  },
+  {
+    path: '/u/:userID/p/:posterID',
     name: 'Editor',
     component: Editor
   },

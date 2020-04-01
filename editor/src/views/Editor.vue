@@ -4,18 +4,6 @@
       {{ snackbarMessage }}
       <v-btn color="pink" text @click="snackbar = false">Close</v-btn>
     </v-snackbar>
-    <modal class="rounded" name="onSave">
-      <div
-        class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3"
-        role="alert"
-      >
-        <p class="font-bold">Informational message</p>
-        <p class="text-sm">You are about to save the contents of this poster! Please check the data.</p>
-      </div>
-      <div class="text-green-700 p-8">
-        <p class="text-base">{{ allPosterData }}</p>
-      </div>
-    </modal>
     <modal name="onPublish">
       <div class="flex flex-col">
         <div
@@ -35,7 +23,7 @@
       </div>
     </modal>
     <div class="w-full flex justify-between items-center">
-      <h1>Digital Posters</h1>
+      <h1>{{posterTitle}}</h1>
       <div>
         <button
           v-if="!preview"
@@ -120,16 +108,18 @@
           <div
             @click="onAdd(credits)"
             v-show="!preview && credits.length === 0"
-            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700"
+            class="p-4 mb-3 action-button bg-white shadow rounded-lg flex flex-col justify-center items-center w-full text-gray-500 hover:text-gray-700 cursor-pointer"
           >
             <div>Add Credits</div>
             <PlusCircleIcon size="54" class="p-1 focus:shadow-outline" />
           </div>
         </div>
         <div class="text-center w-full md:w-1/6 px-4">
-          <div class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg">
-            <qrcode-vue v-if="publishLink !== ''" :value="publishLink" level="H"></qrcode-vue>
-            <span v-if="publishLink !== ''"><a :href="publishLink">{{publishLink}}</a></span>
+          <div class="p-4 mb-3 bg-white justify-end items-center shadow rounded-lg break-words">
+            <qrcode-vue class="mb-4" v-if="publishID !== ''" :value="publishLink" level="H"></qrcode-vue>
+            <span v-if="publishID !== ''">
+              <a :href="publishLink">{{publishLink}}</a>
+            </span>
             <span v-else>QR Code Placeholder</span>
           </div>
         </div>
@@ -278,9 +268,10 @@ export default {
   data() {
     return {
       preview: false,
-      publishLink: "",
+      publishID: "",
       userID: 2,
       posterID: 1,
+      posterTitle: "",
       snackbar: false,
       snackbarMessage: "",
       header: [],
@@ -328,7 +319,7 @@ export default {
     },
     onSave() {
       const data = Object.assign(this.getAllPosterData(), {
-        publishLink: this.publishLink
+        publishID: this.publishID
       });
       console.log(data);
       // localStorage["posterSave"] = JSON.stringify(data);
@@ -349,29 +340,50 @@ export default {
     loadPoster() {
       const that = this;
       axios
-        .post(config.localServerUrl + "/loadPoster", { userID: this.userID })
+        .post(config.localServerUrl + "/loadPoster", {
+          userID: this.userID,
+          posterID: this.posterID
+        })
         .then(function(response) {
-          const posterData = response.data.poster;
-          that.$data.publishLink = response.data.qrCode;
           console.log(response);
-          console.log(posterData);
-          posterData.forEach(section => {
-            const name = section.name;
-            let hasContent = false;
-            // TODO: QR code data will cause issues, remember to fix here by avoiding QR code data
-            if (section.content !== undefined) {
-              section.content.forEach((content, index) => {
-                that.$set(that.$data[name], index, content);
-                localStorage[content.id] = JSON.stringify(content.body);
-              });
 
-              hasContent = true;
+          if (response.data.poster != undefined) {
+            const posterData = response.data.poster;
+
+            if (
+              response.data.publishID !== null ||
+              response.data.publishID !== undefined
+            ) {
+              that.$data.publishID = response.data.publishID;
             }
 
-            if (hasContent === false) {
-              that.onDelete(that.$data[name], 0);
+            if (
+              response.data.posterTitle !== null ||
+              response.data.posterTitle !== undefined
+            ) {
+              that.$data.posterTitle = response.data.posterTitle;
             }
-          });
+
+            console.log(response);
+            console.log(posterData);
+            posterData.forEach(section => {
+              const name = section.name;
+              let hasContent = false;
+              // TODO: QR code data will cause issues, remember to fix here by avoiding QR code data
+              if (section.content !== undefined) {
+                section.content.forEach((content, index) => {
+                  that.$set(that.$data[name], index, content);
+                  localStorage[content.id] = JSON.stringify(content.body);
+                });
+
+                hasContent = true;
+              }
+
+              if (hasContent === false) {
+                that.onDelete(that.$data[name], 0);
+              }
+            });
+          }
         })
         .catch(function(error) {
           console.log(error);
@@ -382,12 +394,18 @@ export default {
     },
     onPublishConfirm() {
       const that = this;
-      axios
-        .post(config.localServerUrl + "/publishPoster", { userID: this.userID })
-        .then(function(response) {
-          // Send back published link in response for qrcode
-          that.$data.publishLink = "http://192.168.2.233:8080/#/p/2";
 
+      if (this.publishID === "") {
+        this.publishID = this.generateId();
+      }
+
+      const data = this.getAllPosterData();
+      axios
+        .post(config.localServerUrl + "/publishPoster", {
+          poster: data.poster,
+          publishID: this.publishID
+        })
+        .then(function(response) {
           that.onSave();
 
           that.snackbarMessage = response.data;
@@ -623,7 +641,15 @@ export default {
     }
   },
   mounted() {
+    this.userID = parseInt(this.$route.params.userID);
+    this.posterID = this.$route.params.posterID;
+
     this.loadPoster();
+  },
+  computed: {
+    publishLink() {
+      return config.localClientUrl + "/#/p/" + this.publishID;
+    }
   }
 };
 </script>
