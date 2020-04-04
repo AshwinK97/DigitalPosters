@@ -105,14 +105,14 @@ export default {
 
           vm.snackbarMessage = "Login Successful!";
           vm.snackbar = true;
-
+          // Push user view to dashboard upon successful login
           vm.$router.push({
             name: "Dashboard",
             params: { id: response.data.userID }
           });
         })
         .catch(function(error) {
-          console.log(error)
+          console.log(error);
           vm.snackbarMessage = "Username or Password is incorrect.";
           vm.snackbar = true;
         });
@@ -130,6 +130,7 @@ export default {
             vm.snackbarMessage = "Signup Successful!";
             vm.snackbar = true;
 
+            // Push user view to dashboard upon successful signup
             vm.$router.push({
               name: "Dashboard",
               params: { id: response.data.userID }
@@ -144,8 +145,7 @@ export default {
         this.snackbar = true;
       }
     }
-  },
-  mounted() {}
+  }
 };
 </script>
 

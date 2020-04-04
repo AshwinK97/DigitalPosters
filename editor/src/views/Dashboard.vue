@@ -106,8 +106,10 @@ export default {
           console.log(error);
         });
     },
+    // Creates an empty poster to be edited by the user
+    // Poster ID is generated 
     addPoster() {
-      console.log("Adding Poster initiated");
+      console.log("Creating New Poster");
       this.posterID = this.generateID();
       const data = {
         userID: this.userID,
@@ -134,6 +136,7 @@ export default {
         .post(config.serverUrl + "/savePoster", data)
         .then(function(response) {
           console.log(response);
+          // On success update posters in dashboard and push user view to Editor with new poster
           vm.loadPostersByUserID(vm.userID);
           vm.$router.push({
             name: "Editor",
@@ -144,9 +147,10 @@ export default {
           console.log(error);
         });
     },
+    // Allows the user to delete a poster using the Poster ID
     onDelete(id) {
       const vm = this;
-      console.log(`Poster: ${id}`);
+      console.log(`Deleting Poster ${id}`);
       axios
         .delete(config.serverUrl + "/deletePoster", {
           data: { userID: this.userID, posterID: id }
@@ -166,7 +170,9 @@ export default {
     }
   },
   mounted() {
+    // Extract userID to be save within view data for future use
     this.userID = this.$route.params.id;
+    // Load posters by user ID to be placed in grid for the user to access
     this.loadPostersByUserID(this.userID);
   }
 };

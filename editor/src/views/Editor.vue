@@ -373,6 +373,7 @@ export default {
 
       this.closeModal("onPublish");
     },
+    // Allows the user to preview their published poster
     onPreview() {
       this.preview = !this.preview;
 
@@ -391,6 +392,7 @@ export default {
         };
       }
     },
+    // Loads content of poster into the editor appropriately
     loadPoster() {
       const vm = this;
       axios
@@ -400,7 +402,7 @@ export default {
         })
         .then(function(response) {
           console.log(response);
-
+          // Ensures there is poster data to be used
           if (response.data.poster != undefined) {
             const posterData = response.data.poster;
 
@@ -425,12 +427,13 @@ export default {
               if (section.content !== undefined) {
                 section.content.forEach((content, index) => {
                   vm.$set(vm.$data[name], index, content);
+                  // Store content into local storage to be used later by block ID
                   localStorage[content.id] = JSON.stringify(content.body);
                 });
 
                 hasContent = true;
               }
-
+              // Show 'add block' if section has no content
               if (hasContent === false) {
                 vm.onDelete(vm.$data[name], 0);
               }
@@ -450,9 +453,11 @@ export default {
         .substr(2, 9);
     },
     updateVisibility() {
+      // Used to make sure sections are visible if not empty and vice versa
       this.sections.forEach(section => {
         if (this.$data[section].length > 0) {
           const data = JSON.parse(localStorage[this.$data[section][0].id]);
+          // Logic used to detect if a block is empty of not
           const hasContent =
             Object.keys(data.content[0]).length > 1 || data.content.length > 1;
 
@@ -463,12 +468,14 @@ export default {
       });
     },
     getAllPosterData() {
+      // Aggregate all content data from poster currently being edited
       const vm = this;
       const allPosterData = this.sections.map(section => ({
         name: section,
         content: vm.$data[section]
       }));
 
+      // Bundled userID and posterID with the aggregated data to be pushed to the database
       return {
         userID: this.userID,
         poster: {
@@ -479,12 +486,15 @@ export default {
     }
   },
   mounted() {
+    // Extract User ID and Poster ID for future use
     this.userID = this.$route.params.userID;
     this.posterID = this.$route.params.posterID;
 
+    // Load poster into editor using User and Poster ID
     this.loadPoster();
   },
   computed: {
+    // Dynamically create link for published poster
     publishLink() {
       return config.clientUrl + "/#/p/" + this.publishID;
     }
